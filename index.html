@@ -264,6 +264,42 @@ h1,h2,h3{font-family:var(--f-display);text-wrap:balance;margin:0;line-height:1.2
 .result .bigemoji{font-size:5rem;line-height:1}
 .result h2{font-size:2rem}
 
+.word .pic2 img{height:72px;width:auto;max-width:130px;object-fit:contain;border-radius:10px}
+.word .pic2 .fig svg,.word .fig svg{width:auto;height:74px}
+.word .pic2 .spin svg{width:60px;height:60px}
+/* bath */
+.bathtub{display:grid;place-items:center;border-radius:22px;padding:10px;background:linear-gradient(#DDF1FB 0 70%,#BFE3F5 70%)}
+.body svg{height:min(56vh,440px);width:auto;display:block}
+.bp{cursor:pointer}
+.bp.nope{animation:blink .5s}
+@keyframes blink{50%{opacity:.25}}
+.bub{fill:#fff;stroke:#9CCBE8;stroke-width:1.2;opacity:.92;animation:bubble .5s ease-out}
+@keyframes bubble{from{r:0;opacity:0}}
+/* pet shop */
+.counter{display:flex;align-items:center;gap:12px;flex-wrap:wrap;background:var(--surface-2);border-radius:20px;padding:12px 16px}
+.cust{font-size:4rem;line-height:1;transition:transform .3s}
+.cust.happy{transform:scale(1.15) rotate(-6deg)}
+.bubble{position:relative;flex:1;min-width:150px;background:var(--surface);border:2px solid var(--line);border-radius:18px;padding:10px 14px;font-family:var(--f-read);font-weight:700;font-size:1.3rem}
+.basket{font-size:3rem;line-height:1}
+.shelf{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:16px}
+.pet{border-radius:18px;background:var(--surface);border:2px solid var(--line);box-shadow:0 5px 0 var(--line);padding:6px}
+.pet .pic2{display:grid;place-items:center;aspect-ratio:1/1;font-size:3.4rem;line-height:1}
+.pet .pic2 img{width:100%;height:100%;object-fit:contain}
+.pet.wrong{animation:shake .45s}
+.pet-fly img{width:100%;height:auto}
+/* bus */
+.street{position:relative;height:230px;border-radius:22px;overflow:hidden;background:linear-gradient(#CFE8F7 0 72%,#9AA3AF 72% 76%,#B9BCC4 76%)}
+.bus{position:absolute;left:50%;bottom:14px;width:min(92%,420px);transform:translateX(-50%);transition:transform 2s ease-in}
+.bus svg{width:100%;height:auto;display:block}
+.bus .leaf{transition:transform .6s ease}
+.bus.open .leaf.l{transform:translateX(-26px)}
+.bus.open .leaf.r{transform:translateX(26px)}
+.bus .spinner{animation:roll 1s linear infinite;animation-play-state:paused}
+.bus.spin .spinner{animation-play-state:running}
+.bus.go{transform:translateX(120vw)}
+.bbtns{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:16px}
+.bbtns .mbtn svg{width:56px;height:48px}
+
 @media (max-width:720px){
   .story,.karaoke{grid-template-columns:1fr;gap:14px}
   .steps button .lb{font-size:.85rem}
@@ -285,9 +321,120 @@ h1,h2,h3{font-family:var(--f-display);text-wrap:balance;margin:0;line-height:1.2
 <script>
 /* ============ lesson data ============ */
 const BLANKET = '<svg viewBox="0 0 64 48" aria-hidden="true"><rect x="4" y="6" width="56" height="17" rx="5" fill="#F48FB1"/><rect x="4" y="26" width="56" height="17" rx="5" fill="#64B5F6"/><path d="M4 14.5h56M4 34.5h56" stroke="#fff" stroke-width="2.4" stroke-dasharray="5 4"/></svg>';
+const WHEEL = '<svg viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="20" r="17" fill="#2B2B2B"/><path d="M20 4v32M4 20h32M9 9l22 22M31 9L9 31" stroke="#666" stroke-width="2.4"/><circle cx="20" cy="20" r="7" fill="#C9CED8"/></svg>';
+const DOOR_OPEN = '<svg viewBox="0 0 48 40" aria-hidden="true"><rect x="10" y="3" width="28" height="35" rx="2" fill="#3A2B4A"/><rect x="2" y="3" width="12" height="35" fill="#9AD0F5" stroke="#5A7FA8" stroke-width="1.6"/><rect x="34" y="3" width="12" height="35" fill="#9AD0F5" stroke="#5A7FA8" stroke-width="1.6"/></svg>';
+const DOOR_SHUT = '<svg viewBox="0 0 48 40" aria-hidden="true"><rect x="10" y="3" width="14" height="35" fill="#9AD0F5" stroke="#5A7FA8" stroke-width="1.6"/><rect x="24" y="3" width="14" height="35" fill="#9AD0F5" stroke="#5A7FA8" stroke-width="1.6"/></svg>';
 const BIGICON = '<svg viewBox="0 0 50 36" aria-hidden="true"><circle cx="8" cy="22" r="5" fill="#FFC83D"/><path d="M16 22h6m-3-3l3 3-3 3" stroke="#8AA0C8" stroke-width="2.4" fill="none" stroke-linecap="round"/><circle cx="36" cy="18" r="13" fill="#FFC83D"/></svg>';
 
 const LESSONS = [
+{
+  id:'d1', day:'Day 1', title:'Bath Song', zh:'洗澡歌', cover:'media/d1_1.jpg', badge:'🛁',
+  pages:[
+    {en:'Can you wash your hair?\nI can wash my hair.',           key:'hair',      part:'hair',      zh:'你会洗头发吗？我会洗我的头发。', act:'双手在头上揉一揉',     img:'media/d1_1.jpg', au:'media/d1_1.mp3', q:'media/d1q_1.mp3', a:'media/d1a_1.mp3'},
+    {en:'Can you wash your feet?\nI can wash my feet.',           key:'feet',      part:'feet',      zh:'你会洗脚吗？我会洗我的脚。',     act:'弯下腰搓搓小脚',       img:'media/d1_2.jpg', au:'media/d1_2.mp3', q:'media/d1q_2.mp3', a:'media/d1a_2.mp3'},
+    {en:'Can you wash your face?\nI can wash my face.',           key:'face',      part:'face',      zh:'你会洗脸吗？我会洗我的脸。',     act:'双手在脸上画圈圈',     img:'media/d1_3.jpg', au:'media/d1_3.mp3', q:'media/d1q_3.mp3', a:'media/d1a_3.mp3'},
+    {en:'Can you wash your knees?\nI can wash my knees.',         key:'knees',     part:'knees',     zh:'你会洗膝盖吗？我会洗我的膝盖。', act:'拍拍两个膝盖',         img:'media/d1_4.jpg', au:'media/d1_4.mp3', q:'media/d1q_4.mp3', a:'media/d1a_4.mp3'},
+    {en:'Can you wash your shoulders?\nI can wash my shoulders.', key:'shoulders', part:'shoulders', zh:'你会洗肩膀吗？我会洗我的肩膀。', act:'拍拍两边肩膀',         img:'media/d1_5.jpg', au:'media/d1_5.mp3', q:'media/d1q_5.mp3', a:'media/d1a_5.mp3'},
+    {en:'Can you wash your toes?\nI can wash my toes.',           key:'toes',      part:'toes',      zh:'你会洗脚趾吗？我会洗我的脚趾。', act:'摸摸脚趾头，动一动',   img:'media/d1_6.jpg', au:'media/d1_6.mp3', q:'media/d1q_6.mp3', a:'media/d1a_6.mp3'},
+    {en:'Can you wash your hands?\nI can wash my hands.',         key:'hands',     part:'hands',     zh:'你会洗手吗？我会洗我的手。',     act:'两只手互相搓一搓',     img:'media/d1_7.jpg', au:'media/d1_7.mp3', q:'media/d1q_7.mp3', a:'media/d1a_7.mp3'},
+    {en:'Can you wash your nose?\nI can wash my nose.',           key:'nose',      part:'nose',      zh:'你会洗鼻子吗？我会洗我的鼻子。', act:'轻轻捏捏小鼻子',       img:'media/d1_8.jpg', au:'media/d1_8.mp3', q:'media/d1q_8.mp3', a:'media/d1a_8.mp3'},
+    {en:'This is the way we take a bath.', key:'bath', zh:'我们就是这样洗澡的。', act:'假装坐进浴缸，身子左右摇一摇', img:'media/d1_9.jpg', au:'media/d1_9.mp3'}
+  ],
+  speak:[
+    {en:'I can wash my hair.', key:'hair', from:0, au:'media/d1a_1.mp3'},
+    {en:'I can wash my feet.', key:'feet', from:1, au:'media/d1a_2.mp3'},
+    {en:'I can wash my face.', key:'face', from:2, au:'media/d1a_3.mp3'},
+    {en:'I can wash my knees.', key:'knees', from:3, au:'media/d1a_4.mp3'},
+    {en:'I can wash my shoulders.', key:'shoulders', from:4, au:'media/d1a_5.mp3'},
+    {en:'I can wash my toes.', key:'toes', from:5, au:'media/d1a_6.mp3'},
+    {en:'I can wash my hands.', key:'hands', from:6, au:'media/d1a_7.mp3'},
+    {en:'I can wash my nose.', key:'nose', from:7, au:'media/d1a_8.mp3'},
+    {en:'This is the way we take a bath.', key:'bath', from:8, au:'media/d1_9.mp3'}
+  ],
+  words:[
+    {w:'hair',zh:'头发',part:'hair',a:'揉揉头发'},{w:'face',zh:'脸',part:'face',a:'摸摸脸'},{w:'nose',zh:'鼻子',part:'nose',a:'捏捏鼻子'},
+    {w:'shoulders',zh:'肩膀',part:'shoulders',a:'拍拍肩膀'},{w:'hands',zh:'手',part:'hands',a:'搓搓手'},{w:'knees',zh:'膝盖',part:'knees',a:'拍拍膝盖'},
+    {w:'feet',zh:'脚',part:'feet',a:'跺跺脚'},{w:'toes',zh:'脚趾',part:'toes',a:'动动脚趾'},
+    {w:'wash',zh:'洗',pic:'🧼',a:'搓一搓'},{w:'bath',zh:'洗澡',pic:'🛁',a:'坐进浴缸'}
+  ],
+  games:[
+    {id:'bath',icon:'🛁',name:'帮小朋友洗澡',desc:'听 “Can you wash your knees?”，点小朋友的膝盖，冒出泡泡。'}
+  ],
+  song:{src:'media/d1_song.mp3', lines:[
+    [2.3,5.9,0,'Can you wash your hair?'],[6.2,10.2,0,'I can wash my hair.'],
+    [10.4,14.3,1,'Can you wash your feet?'],[14.6,18.4,1,'I can wash my feet.'],
+    [18.6,22.0,2,'Can you wash your face?'],[22.3,25.7,2,'I can wash my face.'],
+    [25.96,29.54,3,'Can you wash your knees?'],[31.4,33.7,3,'I can wash my knees.'],
+    [35.04,37.6,0,'I can wash my hair.'],[39.46,41.52,1,'I can wash my feet.'],[43.6,45.6,2,'I can wash my face.'],[47.26,49.68,3,'I can wash my knees.'],
+    [49.68,55.78,8,'This is the way we take a bath.'],
+    [58.02,60.84,4,'Can you wash your shoulders?'],[62.64,65.22,4,'I can wash my shoulders.'],
+    [66.84,68.88,5,'Can you wash your toes?'],[70.78,73.04,5,'I can wash my toes.'],
+    [74.9,76.94,6,'Can you wash your hands?'],[78.12,81.0,6,'I can wash my hands.'],
+    [82.18,84.94,7,'Can you wash your nose?'],[86.66,89.26,7,'I can wash my nose.'],
+    [90.42,93.22,4,'I can wash my shoulders.'],[94.96,97.16,5,'I can wash my toes.'],[98.98,101.28,6,'I can wash my hands.'],[103.02,105.2,7,'I can wash my nose.'],
+    [105.2,111.12,8,'This is the way we take a bath.']
+  ]},
+  life:[
+    '洗澡时一边洗一边问 “Can you wash your hair?”，让孩子答 “I can wash my hair.” 也可以反过来，让孩子考你。',
+    '给娃娃或小熊洗澡，孩子当“老师”：“Wash your knees!”',
+    '平时玩“摸哪里说哪里”：大人说 “Touch your nose!”，孩子摸鼻子。'
+  ]
+},
+{
+  id:'d2', day:'Day 2', title:'The Pet Store', zh:'宠物店', cover:'media/d2_cover.jpg', badge:'🐶',
+  pages:[
+    {en:'Here is a kitten.', key:'kitten', zh:'这儿有一只小猫。',   act:'学小猫“喵喵”，用手洗洗脸', img:'media/d2_1.jpg', au:'media/d2_1.mp3'},
+    {en:'Here is a puppy.',  key:'puppy',  zh:'这儿有一只小狗。',   act:'学小狗“汪汪”，摇摇尾巴',   img:'media/d2_2.jpg', au:'media/d2_2.mp3'},
+    {en:'Here is a fish.',   key:'fish',   zh:'这儿有一条鱼。',     act:'双手合拢，像小鱼一样游',   img:'media/d2_3.jpg', au:'media/d2_3.mp3'},
+    {en:'Here is a frog.',   key:'frog',   zh:'这儿有一只青蛙。',   act:'蹲下来，像青蛙一样跳',     img:'media/d2_4.jpg', au:'media/d2_4.mp3'},
+    {en:'Here is a gerbil.', key:'gerbil', zh:'这儿有一只沙鼠。',   act:'两只小手放嘴边，啃一啃',   img:'media/d2_5.jpg', au:'media/d2_5.mp3'},
+    {en:'Here is a bird.',   key:'bird',   zh:'这儿有一只小鸟。',   act:'张开手臂扇一扇，飞起来',   img:'media/d2_6.jpg', au:'media/d2_6.mp3'},
+    {en:'Here is a snake.',  key:'snake',  zh:'这儿有一条蛇。',     act:'手臂弯弯扭一扭，“嘶嘶”',   img:'media/d2_7.jpg', au:'media/d2_7.mp3'},
+    {en:'Here is a bunny!',  key:'bunny',  zh:'给你一只小兔子！',   act:'两只手放头上当耳朵，跳一跳', img:'media/d2_8.jpg', au:'media/d2_8.mp3'}
+  ],
+  words:[
+    {w:'kitten',zh:'小猫',pic:'<img src="media/d2_1.jpg" alt="">'},{w:'puppy',zh:'小狗',pic:'<img src="media/d2_2.jpg" alt="">'},
+    {w:'fish',zh:'鱼',pic:'<img src="media/d2_3.jpg" alt="">'},{w:'frog',zh:'青蛙',pic:'<img src="media/d2_4.jpg" alt="">'},
+    {w:'gerbil',zh:'沙鼠',pic:'<img src="media/d2_5.jpg" alt="">'},{w:'bird',zh:'小鸟',pic:'<img src="media/d2_6.jpg" alt="">'},
+    {w:'snake',zh:'蛇',pic:'<img src="media/d2_7.jpg" alt="">'},{w:'bunny',zh:'小兔子',pic:'🐰'}
+  ],
+  games:[
+    {id:'shop',icon:'🏪',name:'开宠物店',desc:'你当店主。客人要什么小动物，就把它递给客人。'},
+    {id:'pick',icon:'👂',name:'听音找图',desc:'听一句话，从三张图里点出对的那张。'}
+  ],
+  life:[
+    '拿玩具小动物玩“开宠物店”：孩子递给你时说 “Here is a puppy!” Here is 就是“给你、这儿有”。',
+    '递东西的时候都可以用：“Here is a cup.” “Here is a book.”',
+    'gerbil 是沙鼠，没见过没关系，知道是一种小老鼠一样的宠物就行。'
+  ]
+},
+{
+  id:'d3', day:'Day 3', title:'The Wheels on the Bus', zh:'巴士上的轮子（儿歌）', cover:'media/d3_1.jpg', badge:'🚌',
+  pages:[
+    {en:'The wheels on the bus go round and round.', key:'wheels|round', zh:'巴士上的轮子转呀转。', act:'两只手在身前转圈圈', img:'media/d3_1.jpg', au:'media/d3_1.mp3'},
+    {en:'Round and round, round and round.',         key:'round',        zh:'转呀转，转呀转。',     act:'继续转圈圈，越转越快', img:'media/d3_2.jpg', au:'media/d3_2.mp3'},
+    {en:'The door on the bus goes open and shut.',   key:'door|open|shut', zh:'巴士上的门开了又关。', act:'双手张开是 open，合拢是 shut', img:'media/d3_3.jpg', au:'media/d3_3.mp3'},
+    {en:'Open and shut, open and shut.',             key:'open|shut',    zh:'开了又关，开了又关。', act:'双手一开一合', img:'media/d3_4.jpg', au:'media/d3_4.mp3'}
+  ],
+  words:[
+    {w:'bus',zh:'巴士',pic:'🚌'},{w:'wheels',zh:'轮子',pic:WHEEL},{w:'round and round',zh:'转呀转',pic:'<span class="spin">'+WHEEL+'</span>',a:'手转圈'},
+    {w:'door',zh:'门',pic:DOOR_SHUT},{w:'open',zh:'打开',pic:DOOR_OPEN,a:'双手张开'},{w:'shut',zh:'关上',pic:DOOR_SHUT,a:'双手合拢'}
+  ],
+  games:[
+    {id:'bus',icon:'🚌',name:'我来开巴士',desc:'听 “Open the door!” “Round and round!”，让巴士开门、关门、转轮子。'}
+  ],
+  song:{src:'media/d3_song.mp3', lines:[
+    [0,3.2,0,'The wheels on the bus go round and round,'],[3.3,6.2,1,'round and round, round and round.'],
+    [6.18,9.6,0,'The wheels on the bus go round and round,'],[9.8,12.4,1,'round and round.'],
+    [18.06,21.6,2,'The door on the bus goes open and shut,'],[21.7,24.5,3,'open and shut, open and shut.'],
+    [24.54,27.9,2,'The door on the bus goes open and shut,'],[28.2,30.6,3,'open and shut.']
+  ]},
+  life:[
+    '坐公交车时指着说：“The door goes open and shut.” “The wheels go round and round.”',
+    '开关门、开关盒子、开关冰箱，都可以说 open 和 shut。',
+    '唱歌时配动作：双手转圈是轮子，双手一开一合是门。'
+  ]
+},
 {
   id:'d4', day:'Day 4', title:'Going on Vacation', zh:'出发去度假', cover:'media/d4_cover.jpg', badge:'🚙', pickPic:true,
   pages:[
@@ -390,7 +537,7 @@ const LESSONS = [
 
 const ROUND_YES = [['🌕','moon','the moon'],['⚽','ball','a ball'],['🍪','cookie','a cookie'],['🍊','orange','an orange'],['🍩','donut','a donut'],['🥮','mooncake','a mooncake']];
 const ROUND_NO  = [['⭐','star','a star'],['📘','book','a book'],['🏠','house','a house'],['🍌','banana','a banana'],['📱','phone','a phone'],['🔺','triangle','a triangle']];
-const ZH_INTRO = {pick:'听英语，找到对的图片', pack:'听英语，把东西放进车里', round:'它是不是圆的？圆的点左边，不圆点右边', moon:'听英语，给月亮变魔法'};
+const ZH_INTRO = {pick:'听英语，找到对的图片', pack:'听英语，把东西放进车里', round:'它是不是圆的？圆的点左边，不圆点右边', moon:'听英语，给月亮变魔法', bath:'听英语，点一点要洗的地方', shop:'你是宠物店老板，客人要什么，就点什么', bus:'听英语，开巴士'};
 const cap = t => t[0].toUpperCase() + t.slice(1);
 
 const STEPS = [
@@ -455,9 +602,11 @@ function allPhrases(){
   const en = new Set(['Yes!','Yes! Round, round, round!','Hmm, look again!','Hmm, listen again!','Great job!','Is it round?']);
   const zh = new Set(Object.values(ZH_INTRO));
   LESSONS.forEach(l => { l.words.forEach(w => en.add(w.w)); l.pages.forEach(p => zh.add(p.zh)); });
-  LESSONS[0].words.filter(w => w.w !== 'car').forEach(w => { en.add(`Put the ${w.w} in the car!`); });
+  LESSONS.find(l => l.id === 'd4').words.filter(w => w.w !== 'car').forEach(w => { en.add(`Put the ${w.w} in the car!`); });
   ROUND_YES.concat(ROUND_NO).forEach(([,,a]) => en.add(`Look! ${cap(a)}. Is it round?`));
   ROUND_NO.forEach(([,n]) => en.add(`Yes! The ${n} is not round.`));
+  ['Thank you!','Open!','Shut!', ...Object.values(BUS_CMDS)].forEach(t => en.add(t));
+  LESSONS.find(l => l.id === 'd2').words.forEach(w => en.add(`A ${w.w}, please!`));
   MOON_STEPS.forEach(s => { en.add(s.cmd); s.after.forEach(([k,arg]) => { if(k === 'say') en.add(arg); }); });
   return {en:[...en], zh:[...zh]};
 }
@@ -538,6 +687,7 @@ function starRow(lid){
 function highlight(p){
   let h = esc(p.en);
   if(p.key) h = h.replace(new RegExp(`\\b(${p.key})\\b`, 'gi'), '<mark>$1</mark>');
+  h = h.replace(/\n/g, '<br>');
   if(p.rep) h += ` <span class="x2">×${p.rep}</span>`;
   return h;
 }
@@ -712,7 +862,7 @@ function stageWords(st){
   </div>
   <div class="words">
     ${l.words.map((w,i) => `<button class="word ${S.seen.has(i)?'seen':''}" data-a="word" data-i="${i}">
-      <span class="pic2">${w.pic}</span><span class="w">${esc(w.w)}</span><span class="z">${w.zh}</span>${w.a?`<span class="a">🙌 ${w.a}</span>`:''}
+      <span class="pic2">${wordPic(w)}</span><span class="w">${esc(w.w)}</span><span class="z">${w.zh}</span>${w.a?`<span class="a">🙌 ${w.a}</span>`:''}
     </button>`).join('')}
   </div>`;
 }
@@ -741,7 +891,7 @@ function stageGame(st){
       <button class="gcard" data-a="game" data-g="${g.id}"><span class="big">${g.icon}</span><h3>${g.name}</h3><p>${g.desc}</p></button>`).join('')}</div>`;
     return;
   }
-  ({pick:gPickRender, pack:gPackRender, round:gRoundRender, moon:gMoonRender})[g.type](st);
+  ({pick:gPickRender, pack:gPackRender, round:gRoundRender, moon:gMoonRender, bath:gBathRender, shop:gShopRender, bus:gBusRender})[g.type](st);
 }
 function startGame(type){
   stopAll();
@@ -758,6 +908,12 @@ function startGame(type){
     S.game = {type, items: shuffle([...yes, ...no]), i:0, score:0};
   } else if(type === 'moon'){
     S.game = {type, i:0, fx:[]};
+  } else if(type === 'bath'){
+    S.game = {type, order: shuffle(BODY_PARTS.map((_,i)=>i)), i:0, score:0, clean:[], miss:false};
+  } else if(type === 'shop'){
+    S.game = {type, order: shuffle(l.words.map((_,i)=>i)).slice(0,6), i:0, score:0, miss:false};
+  } else if(type === 'bus'){
+    S.game = {type, i:0, door:false};
   }
   S.game.intro = true;
   renderStage();
@@ -987,6 +1143,207 @@ async function gMoon(b, el){
   gameResult(document.getElementById('stage'), '🌝🏮', '魔法全部成功！', '今晚带孩子看看真的月亮，说一句 “Hello, Mr. Moon!”');
 }
 
+/* body figure for the bath lesson: every part is its own tap target */
+const BODY_PARTS = ['hair','feet','face','knees','shoulders','toes','hands','nose'];
+const BUB_AT = {hair:[100,22], face:[82,60], nose:[100,68], shoulders:[64,106], hands:[38,190], knees:[83,232], feet:[78,272], toes:[122,290]};
+function bodySVG(hi, live){
+  const skin = '#F4C29B', dark = '#E3A77C';
+  const f = p => (hi === p ? 'var(--moon)' : null);
+  const g = (p, inner) => `<g class="bp" data-p="${p}" ${live ? `data-a="gbath"` : ''}>${inner}</g>`;
+  return `<svg viewBox="0 0 200 305" aria-hidden="true">
+    <path d="M58 112 L40 182 M142 112 L160 182" stroke="${skin}" stroke-width="16" stroke-linecap="round"/>
+    <path d="M86 190 L82 272 M114 190 L118 272" stroke="${skin}" stroke-width="20" stroke-linecap="round"/>
+    <rect x="90" y="92" width="20" height="16" fill="${skin}"/>
+    <rect x="62" y="100" width="76" height="92" rx="20" fill="${skin}"/>
+    <path d="M64 168 h72 v18 q0 10 -10 10 h-52 q-10 0 -10 -10z" fill="#3D7DD8"/>
+    ${g('shoulders', `<circle cx="66" cy="108" r="17" fill="${f('shoulders')||dark}"/><circle cx="134" cy="108" r="17" fill="${f('shoulders')||dark}"/>`)}
+    ${g('hands', `<circle cx="39" cy="189" r="14" fill="${f('hands')||dark}"/><circle cx="161" cy="189" r="14" fill="${f('hands')||dark}"/>`)}
+    ${g('knees', `<circle cx="83" cy="232" r="13" fill="${f('knees')||dark}"/><circle cx="117" cy="232" r="13" fill="${f('knees')||dark}"/>`)}
+    ${g('feet', `<ellipse cx="78" cy="274" rx="19" ry="10" fill="${f('feet')||dark}"/><ellipse cx="122" cy="274" rx="19" ry="10" fill="${f('feet')||dark}"/>`)}
+    ${g('toes', `<rect x="56" y="282" width="44" height="22" fill="transparent"/><rect x="100" y="282" width="44" height="22" fill="transparent"/>
+       ${[64,72,80,88,112,120,128,136].map(x => `<circle cx="${x}" cy="289" r="4.5" fill="${f('toes')||'#D08C62'}"/>`).join('')}`)}
+    ${g('face', `<circle cx="100" cy="62" r="36" fill="${f('face')||skin}"/>`)}
+    <g pointer-events="none"><circle cx="87" cy="58" r="3.5" fill="#3A2A1A"/><circle cx="113" cy="58" r="3.5" fill="#3A2A1A"/>
+      <path d="M88 78 q12 9 24 0" stroke="#A2503A" stroke-width="3" fill="none" stroke-linecap="round"/></g>
+    ${g('nose', `<circle cx="100" cy="68" r="11" fill="transparent"/><circle cx="100" cy="68" r="6" fill="${f('nose')||dark}"/>`)}
+    ${g('hair', `<path d="M62 60 Q60 18 100 16 Q140 18 138 60 Q130 34 100 33 Q70 34 62 60Z" fill="${f('hair')||'#5A3A22'}"/>`)}
+  </svg>`;
+}
+function wordPic(w){ return w.part ? `<span class="fig">${bodySVG(w.part, false)}</span>` : w.pic; }
+
+/* bath: tap the body part the song asks about */
+function gBathRender(st){
+  const g = S.game, l = L();
+  const p = l.pages[g.order[g.i]];
+  st.innerHTML = gameHead(p ? esc(`Can you wash your ${p.part}?`) : 'This is the way we take a bath!',
+      p ? `第 ${g.i+1} 个，共 ${g.order.length} 个 · 听问题，点小朋友身上对的地方` : '洗得干干净净！',
+      `<span class="score">⭐ ${g.score}</span>`) +
+    `<div class="bathtub"><div class="body" id="body">${bodySVG(null, !!p)}</div></div>`;
+  g.clean.forEach(part => addBubbles(part));
+  if(p) gBathSay();
+}
+function addBubbles(part){
+  const svg = document.querySelector('#body svg'); if(!svg) return;
+  const [x, y] = BUB_AT[part];
+  const ns = 'http://www.w3.org/2000/svg';
+  [[0,0,9],[-12,6,6],[11,-7,7],[8,9,5],[-9,-9,5]].forEach(([dx,dy,r]) => {
+    const c = document.createElementNS(ns, 'circle');
+    c.setAttribute('cx', x+dx); c.setAttribute('cy', y+dy); c.setAttribute('r', r);
+    c.setAttribute('class', 'bub'); c.setAttribute('pointer-events', 'none');
+    svg.appendChild(c);
+    if(part === 'shoulders' || part === 'hands' || part === 'knees' || part === 'feet'){
+      const m = c.cloneNode(); m.setAttribute('cx', 200 - (x+dx)); svg.appendChild(m);
+    }
+  });
+}
+async function gBathSay(){
+  const g = S.game, id = runId;
+  if(g.intro){ g.intro = false; await say(ZH_INTRO.bath, 'zh-CN'); if(!alive(id)) return; await wait(200); }
+  const p = L().pages[g.order[g.i]];
+  if(p) playClip(p.q);
+}
+async function gBath(part, el){
+  const g = S.game, l = L();
+  const p = l.pages[g.order[g.i]];
+  if(!p || g.busy) return;
+  const id = runId;
+  if(part === p.part){
+    g.busy = true;
+    if(!g.miss) g.score++;
+    g.clean.push(part); addBubbles(part);
+    await playClip(p.a);
+    g.busy = false; g.miss = false;
+    if(!alive(id)) return;
+    g.i++;
+    if(g.i < g.order.length){ gBathRender(document.getElementById('stage')); return; }
+    gBathRender(document.getElementById('stage'));
+    confetti(20);
+    await playClip(l.pages[8].au);
+    await wait(700);
+    if(!alive(id)) return;
+    gameResult(document.getElementById('stage'), '🛁🫧', `洗对了 ${g.score} / ${g.order.length}`, '今晚洗澡时，一边洗一边问 “Can you wash your hair?”');
+  } else {
+    g.miss = true;
+    el.classList.remove('nope'); void el.getBoundingClientRect(); el.classList.add('nope');
+    await say(part);
+    if(alive(id)){ await wait(250); if(alive(id)) playClip(p.q); }
+  }
+}
+
+/* pet shop: the child is the shopkeeper and hands over the pet the customer asks for */
+const CUSTOMERS = ['👧','👦','👵','👴','🧑','👩'];
+function gShopRender(st){
+  const g = S.game, l = L();
+  if(g.i >= g.order.length){
+    gameResult(st, '🏪', `卖出了 ${g.order.length} 只小动物`, `一次就递对 ${g.score} 次。在家用玩具再开一次店吧！`);
+    return;
+  }
+  const w = l.words[g.order[g.i]];
+  st.innerHTML = gameHead(`A ${esc(w.w)}, please!`, `第 ${g.i+1} 位客人，共 ${g.order.length} 位 · 客人要什么，就点什么`, `<span class="score">⭐ ${g.score}</span>`) +
+    `<div class="counter"><span class="cust" id="cust">${CUSTOMERS[g.i % CUSTOMERS.length]}</span><span class="bubble">A ${esc(w.w)}, please!</span><span class="basket" id="basket">🧺</span></div>
+     <div class="shelf">${l.words.map((x,i) => `<button class="pet" data-a="gshop" data-i="${i}"><span class="pic2">${x.pic}</span></button>`).join('')}</div>`;
+  gShopSay();
+}
+async function gShopSay(){
+  const g = S.game, id = runId;
+  if(g.intro){ g.intro = false; await say(ZH_INTRO.shop, 'zh-CN'); if(!alive(id)) return; await wait(200); }
+  const w = L().words[g.order[g.i]];
+  if(w) say(`A ${w.w}, please!`);
+}
+async function gShop(i, el){
+  const g = S.game, l = L();
+  if(g.busy || g.i >= g.order.length) return;
+  const id = runId, want = g.order[g.i];
+  if(i === want){
+    g.busy = true;
+    if(!g.miss) g.score++;
+    const a = el.getBoundingClientRect(), b = document.getElementById('basket').getBoundingClientRect();
+    const f = document.createElement('div');
+    f.className = 'flyer pet-fly'; f.innerHTML = l.words[i].pic;
+    f.style.left = a.left+'px'; f.style.top = a.top+'px'; f.style.width = a.width+'px';
+    document.body.appendChild(f);
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      f.style.transform = `translate(${b.left - a.left}px, ${b.top - a.top}px) scale(.35)`; f.style.opacity = '0.3';
+    }));
+    await wait(820); f.remove();
+    const cust = document.getElementById('cust'); if(cust) cust.classList.add('happy');
+    await playClip(l.pages[want].au);
+    if(!alive(id)){ g.busy = false; return; }
+    await say('Thank you!');
+    g.busy = false; g.miss = false;
+    if(!alive(id)) return;
+    g.i++; renderStage();
+  } else {
+    g.miss = true;
+    el.classList.remove('wrong'); void el.offsetWidth; el.classList.add('wrong');
+    await say(l.words[i].w);
+    if(alive(id)){ await wait(250); if(alive(id)) say(`A ${l.words[want].w}, please!`); }
+  }
+}
+
+/* bus: open / shut the door, spin the wheels */
+const BUS_CMDS = {open:'Open the door!', shut:'Shut the door!', round:'Round and round!'};
+const BUS_SEQ = ['open','round','shut','round','open','shut'];
+function busSVG(){
+  const wheel = cx => `<g class="wheel" transform="translate(${cx} 134)"><g class="spinner"><circle r="22" fill="#2B2B2B"/><path d="M0 -20V20M-20 0H20M-14 -14L14 14M14 -14L-14 14" stroke="#666" stroke-width="3"/><circle r="9" fill="#C9CED8"/></g></g>`;
+  return `<svg viewBox="0 0 330 170" aria-hidden="true">
+    <rect x="10" y="18" width="306" height="116" rx="20" fill="#E8453C"/>
+    <rect x="10" y="100" width="306" height="10" fill="#FFC83D"/>
+    ${[26,82,138].map(x => `<rect x="${x}" y="34" width="46" height="42" rx="6" fill="#BFE3FF"/>`).join('')}
+    <rect x="200" y="32" width="60" height="98" rx="4" fill="#3A2B4A"/>
+    <rect class="leaf l" x="200" y="32" width="30" height="98" fill="#9AD0F5" stroke="#5A7FA8" stroke-width="2"/>
+    <rect class="leaf r" x="230" y="32" width="30" height="98" fill="#9AD0F5" stroke="#5A7FA8" stroke-width="2"/>
+    <rect x="272" y="34" width="36" height="46" rx="8" fill="#BFE3FF"/>
+    <circle cx="284" cy="92" r="5" fill="#fff"/><circle cx="302" cy="92" r="5" fill="#fff"/>
+    <circle cx="285" cy="93" r="2.4" fill="#222"/><circle cx="303" cy="93" r="2.4" fill="#222"/>
+    <path d="M286 116 q8 6 16 0" stroke="#7A1F18" stroke-width="3" fill="none" stroke-linecap="round"/>
+    ${wheel(78)}${wheel(262)}
+  </svg>`;
+}
+function gBusRender(st){
+  const g = S.game, k = BUS_SEQ[g.i];
+  st.innerHTML = gameHead(k ? BUS_CMDS[k] : 'The wheels on the bus go round and round!', k ? `第 ${g.i+1} 个指令，共 ${BUS_SEQ.length} 个` : '巴士出发啦！',
+      `<span class="score">${g.i} / ${BUS_SEQ.length}</span>`) +
+    `<div class="street"><div class="bus ${g.door ? 'open' : ''}" id="bus">${busSVG()}</div></div>
+     <div class="bbtns">
+       <button class="mbtn" data-a="gbus" data-b="open">${DOOR_OPEN}<small>open</small></button>
+       <button class="mbtn" data-a="gbus" data-b="shut">${DOOR_SHUT}<small>shut</small></button>
+       <button class="mbtn" data-a="gbus" data-b="round">${WHEEL}<small>round and round</small></button>
+     </div>`;
+  if(k) gBusSay();
+}
+async function gBusSay(){
+  const g = S.game, id = runId;
+  if(g.intro){ g.intro = false; await say(ZH_INTRO.bus, 'zh-CN'); if(!alive(id)) return; await wait(200); }
+  const k = BUS_SEQ[g.i]; if(k) say(BUS_CMDS[k]);
+}
+async function gBus(b, el){
+  const g = S.game, k = BUS_SEQ[g.i];
+  if(!k || g.busy) return;
+  const id = runId, bus = document.getElementById('bus');
+  if(b !== k){
+    el.classList.remove('wrong'); void el.offsetWidth; el.classList.add('wrong');
+    await say('Hmm, listen again!'); if(alive(id)) say(BUS_CMDS[k]);
+    return;
+  }
+  g.busy = true;
+  el.classList.add('right');
+  if(k === 'open'){ g.door = true; bus.classList.add('open'); await say('Open!'); }
+  else if(k === 'shut'){ g.door = false; bus.classList.remove('open'); await say('Shut!'); }
+  else { bus.classList.add('spin'); await playClip('media/d3_2.mp3'); bus.classList.remove('spin'); }
+  g.busy = false;
+  if(!alive(id)) return;
+  g.i++;
+  gBusRender(document.getElementById('stage'));
+  if(g.i < BUS_SEQ.length) return;
+  const nb = document.getElementById('bus');
+  nb.classList.add('spin', 'go');
+  await playClip('media/d3_1.mp3');
+  await wait(600);
+  if(!alive(id)) return;
+  gameResult(document.getElementById('stage'), '🚌💨', '巴士开走啦！', '下次坐公交车，跟孩子一起说 “The door goes open and shut.”');
+}
+
 /* ---------- step 4: speak ---------- */
 let mic = {state:'unknown', stream:null};
 async function ensureMic(){
@@ -1092,7 +1449,7 @@ function karaokeRender(st){
   st.innerHTML = `
   <div class="ghead">
     <button class="toy round" data-a="k-back" aria-label="返回">←</button>
-    <div class="prompt"><b>跟着唱：The Moon Is Round</b><small>跟着高亮的那一行唱，一起做动作</small></div>
+    <div class="prompt"><b>跟着唱：${esc(l.title)}</b><small>跟着高亮的那一行唱，一起做动作</small></div>
     <button class="toy yellow" data-a="k-play">${k.playing?'⏸ 暂停':'▶ 播放'}</button>
   </div>
   <div class="karaoke">
@@ -1156,11 +1513,17 @@ const actions = {
     if(g.type==='pick') playClip(L().pages[g.order[g.i]].au);
     else if(g.type==='pack' && g.left.length) say(`Put the ${g.items[g.left[0]].w} in the car!`);
     else if(g.type==='round' && g.items[g.i]) say('Is it round?');
-    else if(g.type==='moon' && MOON_STEPS[g.i]) say(MOON_STEPS[g.i].cmd); },
+    else if(g.type==='moon' && MOON_STEPS[g.i]) say(MOON_STEPS[g.i].cmd);
+    else if(g.type==='bath' && L().pages[g.order[g.i]]) playClip(L().pages[g.order[g.i]].q);
+    else if(g.type==='shop' && g.order[g.i] !== undefined) say(`A ${L().words[g.order[g.i]].w}, please!`);
+    else if(g.type==='bus' && BUS_SEQ[g.i]) say(BUS_CMDS[BUS_SEQ[g.i]]); },
   gpick(b){ gPick(+b.dataset.i, b); },
   gpack(b){ gPack(+b.dataset.i, b); },
   ground(b){ gRound(b.dataset.v, b); },
   gmoon(b){ gMoon(b.dataset.b, b); },
+  gbath(b){ gBath(b.dataset.p, b); },
+  gshop(b){ gShop(+b.dataset.i, b); },
+  gbus(b){ gBus(b.dataset.b, b); },
   'sp-go'(){ spGo(); },
   'sp-again'(){ spGo(); },
   'sp-good'(){ spGood(); },
