@@ -116,7 +116,7 @@ h1,h2,h3{font-family:var(--f-display);text-wrap:balance;margin:0;line-height:1.2
 .story{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:22px;align-items:center}
 .pic{position:relative;margin:0;border-radius:20px;overflow:hidden;background:var(--surface-2);cursor:pointer}
 .pic img{width:100%;height:auto;max-height:62vh;object-fit:contain;margin:0 auto}
-.pic .playbadge{position:absolute;right:12px;bottom:12px;width:58px;height:58px;border-radius:50%;background:var(--moon);color:var(--moon-ink);display:grid;place-items:center;font-size:1.5rem;box-shadow:0 4px 0 var(--moon-deep)}
+.pic .playbadge{position:absolute;right:12px;bottom:12px;width:58px;height:58px;border-radius:50%;background:var(--moon);color:var(--moon-ink);display:grid;place-items:center;font-size:1.6rem;line-height:1;box-shadow:0 4px 0 var(--moon-deep)}
 .pic.playing .playbadge{animation:pulse 1s ease-in-out infinite}
 .pic.playing{box-shadow:0 0 0 5px var(--moon)}
 @keyframes pulse{50%{transform:scale(1.12)}}
@@ -127,8 +127,12 @@ h1,h2,h3{font-family:var(--f-display);text-wrap:balance;margin:0;line-height:1.2
 .chip{display:inline-flex;align-items:center;gap:6px;min-height:40px;padding:0 14px;border-radius:14px;background:var(--surface-2);font-weight:700;font-size:.95rem;color:var(--ink);border:2px solid var(--line)}
 .act{margin-top:14px;background:color-mix(in srgb,var(--moon) 18%,var(--surface));border-radius:16px;padding:10px 14px;font-size:1rem}
 .act b{font-family:var(--f-display)}
-.pager{display:flex;align-items:center;gap:12px;margin-top:18px;flex-wrap:wrap}
-.pager .count{font-family:var(--f-display);font-weight:700;font-size:1.2rem;min-width:56px;text-align:center}
+.pager{display:flex;align-items:center;gap:10px;margin-top:18px}
+.pager .count{flex:1;font-family:var(--f-display);font-weight:700;font-size:1.1rem;color:var(--ink-soft);text-align:center;white-space:nowrap}
+.toy.nav{min-height:56px;padding:0 18px;font-size:1.1rem;white-space:nowrap}
+.toy.nav.ghost{visibility:hidden}
+.listen{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+.listen .chip{min-height:48px;font-size:1rem}
 .dots{display:flex;gap:6px;flex-wrap:wrap;margin-top:12px}
 .dots i{width:12px;height:12px;border-radius:50%;background:var(--line)}
 .dots i.on{background:var(--sky)}
@@ -329,8 +333,11 @@ img{-webkit-touch-callout:none;-webkit-user-drag:none}
 .book .badge{position:absolute;top:10px;right:10px;width:56px;height:56px;border-radius:50%;display:grid;place-items:center;font-size:1.9rem;background:var(--surface);border:3px solid var(--moon);box-shadow:0 3px 0 var(--moon-deep)}
 @media (max-width:540px){ .go{grid-template-columns:1fr} .go img{display:none} .go .toy{justify-self:start} }
 
-@media (max-width:720px){
+@media (max-width:900px){
   .story,.karaoke{grid-template-columns:1fr;gap:14px}
+  .pic img{max-height:48vh}
+}
+@media (max-width:720px){
   .steps button .lb{font-size:.85rem}
   .route{grid-template-columns:repeat(2,1fr)}
   .mbtns{grid-template-columns:repeat(3,1fr)}
@@ -602,6 +609,7 @@ const durations = {};
 function alive(id){ return id === runId; }
 function stopAll(){
   runId++;
+  if(typeof autoRunning !== 'undefined' && autoRunning){ autoRunning = false; const btn = document.getElementById('autoBtn'); if(btn) btn.textContent = '🎧 从这页连着听到最后'; }
   player.pause();
   if(pending){ pending(false); pending = null; }
   try{ speechSynthesis.cancel(); }catch(e){}
@@ -914,17 +922,20 @@ function stageStory(st, autoplay = true){
   <div class="story">
     <figure class="pic" id="pic" data-a="replay" role="button" tabindex="0" aria-label="再听一遍">
       <img src="${p.img}" alt="">
-      <span class="playbadge" aria-hidden="true">▶</span>
+      <span class="playbadge" aria-hidden="true">🔊</span>
     </figure>
     <div>
       <p class="sent">${highlight(p)}</p>
       <div class="zhline"><span>${esc(p.zh)}</span><button class="chip" data-a="zh">🔈 中文</button></div>
       <div class="act"><b>一起做动作：</b>${esc(p.act)}</div>
       <div class="pager">
-        <button class="toy round" data-a="prev" ${S.page===0?'disabled':''} aria-label="上一页">◀</button>
+        <button class="toy nav ${S.page===0?'ghost':''}" data-a="prev" ${S.page===0?'disabled':''}>← 上一页</button>
         <span class="count">${S.page+1} / ${n}</span>
-        <button class="toy round ${S.page<n-1?'yellow':''}" data-a="next" ${S.page===n-1?'disabled':''} aria-label="下一页">▶</button>
-        <button class="toy" data-a="playall">▶▶ 连着听</button>
+        <button class="toy nav blue ${S.page===n-1?'ghost':''}" data-a="next" ${S.page===n-1?'disabled':''}>下一页 →</button>
+      </div>
+      <div class="listen">
+        <button class="chip" data-a="replay">🔊 再听一遍</button>
+        <button class="chip" data-a="playall" id="autoBtn">${autoRunning ? '⏹ 停下来' : '🎧 从这页连着听到最后'}</button>
       </div>
       <div class="dots">${l.pages.map((_,i)=>`<i class="${i<=S.page?'on':''}"></i>`).join('')}</div>
       ${S.page === n-1 ? `<div class="ctarow">${nextCTA('story')}</div>` : ''}
@@ -939,8 +950,11 @@ async function playPage(){
   await playClip(L().pages[S.page].au);
   if(alive(id) && pic) pic.classList.remove('playing');
 }
+let autoRunning = false;
 async function playAll(){
+  if(autoRunning){ stopAll(); return; }
   stopAll();
+  autoRunning = true;
   const id = runId, l = L();
   for(let i = S.page; i < l.pages.length; i++){
     S.page = i;
@@ -953,6 +967,8 @@ async function playAll(){
     await wait(900);
     if(!alive(id)) return;
   }
+  autoRunning = false;
+  const btn = document.getElementById('autoBtn'); if(btn) btn.textContent = '🎧 从这页连着听到最后';
 }
 
 /* ---------- step 2: words ---------- */
@@ -1506,9 +1522,9 @@ function stageSpeak(st){
       <div class="act"><b>边说边做：</b>${esc(p.act)}</div>
       <div class="turn">${panel}</div>
       <div class="pager">
-        <button class="toy round" data-a="sp-prev" ${sp.i===0?'disabled':''} aria-label="上一句">◀</button>
+        <button class="toy nav ${sp.i===0?'ghost':''}" data-a="sp-prev" ${sp.i===0?'disabled':''}>← 上一句</button>
         <span class="count">${sp.i+1} / ${n}</span>
-        <button class="toy round" data-a="sp-next" ${sp.i===n-1?'disabled':''} aria-label="下一句">▶</button>
+        <button class="toy nav ${sp.i===n-1?'ghost':''}" data-a="sp-next" ${sp.i===n-1?'disabled':''}>下一句 →</button>
       </div>
       <div class="dots">${items.map((_,i)=>`<i class="${sp.good.has(i)?'good':(i===sp.i?'on':'')}"></i>`).join('')}</div>
     </div>
