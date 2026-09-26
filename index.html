@@ -137,7 +137,7 @@ h1,h2,h3{font-family:var(--f-display);text-wrap:balance;margin:0;line-height:1.2
 /* ---------- words ---------- */
 .wtop{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:14px}
 .wtop p{margin:0;color:var(--ink-soft)}
-.words{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:14px}
+.words{display:grid;grid-template-columns:repeat(auto-fill,minmax(128px,1fr));gap:12px}
 .word{position:relative;display:flex;flex-direction:column;align-items:center;gap:4px;padding:16px 8px 12px;border-radius:20px;background:var(--surface-2);border:3px solid transparent;box-shadow:0 5px 0 var(--line)}
 .word .pic2{font-size:3.2rem;line-height:1.1;height:72px;display:grid;place-items:center}
 .word .pic2 svg{width:78px;height:60px}
@@ -265,7 +265,7 @@ h1,h2,h3{font-family:var(--f-display);text-wrap:balance;margin:0;line-height:1.2
 .result h2{font-size:2rem}
 
 .word .pic2 img{height:72px;width:auto;max-width:130px;object-fit:contain;border-radius:10px}
-.word .pic2 .fig svg,.word .fig svg{width:auto;height:74px}
+.word .pic2 .fig svg,.word .fig svg{width:100px;height:74px;border-radius:12px;background:#DDF1FB}
 .word .pic2 .spin svg{width:60px;height:60px}
 /* bath */
 .bathtub{display:grid;place-items:center;border-radius:22px;padding:10px;background:linear-gradient(#DDF1FB 0 70%,#BFE3F5 70%)}
@@ -299,6 +299,35 @@ h1,h2,h3{font-family:var(--f-display);text-wrap:balance;margin:0;line-height:1.2
 .bus.go{transform:translateX(120vw)}
 .bbtns{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:16px}
 .bbtns .mbtn svg{width:56px;height:48px}
+
+html{touch-action:manipulation}
+#app{-webkit-user-select:none;user-select:none}
+.guide{-webkit-user-select:text;user-select:text}
+img{-webkit-touch-callout:none;-webkit-user-drag:none}
+.sent mark{cursor:pointer;text-decoration:underline dotted 3px;text-underline-offset:7px}
+.talking [data-a="greplay"]{animation:pulse 1s ease-in-out infinite}
+.ctarow{display:flex;margin-top:18px}
+.result .row+.row{margin-top:-2px}
+/* home: continue, review, stickers */
+.go{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:16px;width:100%;text-align:left;background:var(--surface);border-radius:24px;padding:14px;border:3px solid var(--moon);box-shadow:0 6px 0 var(--moon-deep)}
+.go:active{transform:translateY(4px);box-shadow:0 2px 0 var(--moon-deep)}
+.go img{width:128px;aspect-ratio:4/3;object-fit:cover;border-radius:16px}
+.go small{display:block;font-family:var(--f-display);font-weight:700;color:var(--sky);letter-spacing:.06em}
+.go b{display:block;font-family:var(--f-read);font-size:1.45rem;line-height:1.2}
+.go .next{color:var(--ink-soft)}
+.go .toy{pointer-events:none}
+.go.finished{display:block;text-align:center;font-family:var(--f-display);font-weight:700;font-size:1.25rem;border-color:var(--line);box-shadow:0 6px 0 var(--line)}
+.review{display:flex;align-items:center;gap:14px;margin-top:14px;width:100%;text-align:left;background:var(--surface);border-radius:20px;padding:12px 16px;box-shadow:0 5px 0 var(--line)}
+.review .ic{font-size:2.2rem;line-height:1}
+.review b{display:block;font-family:var(--f-display);font-size:1.15rem}
+.review small{color:var(--ink-soft)}
+.sec{font-size:1.3rem;margin:26px 0 12px}
+.stks{display:flex;gap:12px;flex-wrap:wrap}
+.stk{width:66px;height:66px;border-radius:50%;display:grid;place-items:center;font-size:2.2rem;line-height:1;background:var(--surface);border:3px dashed var(--line);color:var(--line);font-family:var(--f-display);font-weight:800}
+.stk.on{border:3px solid var(--moon);background:color-mix(in srgb,var(--moon) 22%,var(--surface))}
+.book{position:relative}
+.book .badge{position:absolute;top:10px;right:10px;width:56px;height:56px;border-radius:50%;display:grid;place-items:center;font-size:1.9rem;background:var(--surface);border:3px solid var(--moon);box-shadow:0 3px 0 var(--moon-deep)}
+@media (max-width:540px){ .go{grid-template-columns:1fr} .go img{display:none} .go .toy{justify-self:start} }
 
 @media (max-width:720px){
   .story,.karaoke{grid-template-columns:1fr;gap:14px}
@@ -567,7 +596,8 @@ const wait = ms => new Promise(r => setTimeout(r, ms));
 /* ============ audio ============ */
 const player = new Audio();
 player.preload = 'auto';
-let pending = null, runId = 0;
+let pending = null, runId = 0, curSrc = '';
+const blobs = {};
 const durations = {};
 function alive(id){ return id === runId; }
 function stopAll(){
@@ -575,6 +605,7 @@ function stopAll(){
   player.pause();
   if(pending){ pending(false); pending = null; }
   try{ speechSynthesis.cancel(); }catch(e){}
+  document.body.classList.remove('talking');
   document.querySelectorAll('.playing').forEach(el => el.classList.remove('playing'));
 }
 function playClip(src, rate = S.speed){
@@ -582,12 +613,13 @@ function playClip(src, rate = S.speed){
   if(pending){ pending(false); pending = null; }
   return new Promise(res => {
     pending = res;
-    const done = ok => { if(pending === res){ pending = null; } res(ok); };
+    const done = ok => { if(pending === res){ pending = null; } document.body.classList.remove('talking'); res(ok); };
     player.onended = () => { durations[src] = player.duration; done(true); };
     player.onerror = () => done(false);
-    player.onplaying = () => { player.playbackRate = rate; };
+    player.onplaying = () => { player.playbackRate = rate; document.body.classList.add('talking'); };
     player.pause();
-    player.src = src;
+    curSrc = src;
+    player.src = blobs[src] || src;
     player.defaultPlaybackRate = rate;
     player.playbackRate = rate;
     try{ player.preservesPitch = true; player.webkitPreservesPitch = true; }catch(e){}
@@ -597,11 +629,51 @@ function playClip(src, rate = S.speed){
 }
 /* every spoken phrase is pre-recorded (media/tts/map.json) so phones without a system voice still hear it */
 let TTS_MAP = null;
-fetch('media/tts/map.json').then(r => r.ok ? r.json() : null).then(m => { TTS_MAP = m; }).catch(() => {});
+const ttsReady = fetch('media/tts/map.json').then(r => r.ok ? r.json() : null).then(m => { TTS_MAP = m; }).catch(() => {});
+
+/* download a lesson's sound and pictures as soon as it opens, so taps answer instantly on slow networks */
+const fetched = new Set();
+async function prefetchLesson(l){
+  await Promise.race([ttsReady, wait(2500)]);
+  const urls = [];
+  const tts = (lang, t) => { const f = TTS_MAP && TTS_MAP[lang + '|' + t]; if(f) urls.push('media/tts/' + f); };
+  l.pages.forEach(p => { urls.push(p.au, p.img); if(p.q) urls.push(p.q); if(p.a) urls.push(p.a); tts('zh', p.zh); });
+  (l.speak || []).forEach(x => urls.push(x.au));
+  l.words.forEach(w => tts('en', w.w));
+  const todo = urls.filter(u => u && !fetched.has(u));
+  todo.forEach(u => fetched.add(u));
+  let k = 0;
+  const worker = async () => {
+    while(k < todo.length){
+      const u = todo[k++];
+      try{ const r = await fetch(u); if(r.ok && u.endsWith('.mp3')) blobs[u] = URL.createObjectURL(await r.blob()); }catch(e){ fetched.delete(u); }
+    }
+  };
+  for(let i = 0; i < 4; i++) worker();
+}
+
+/* short sound effects, made in the browser */
+let actx = null;
+function sfx(kind){
+  try{
+    actx = actx || new (window.AudioContext || window.webkitAudioContext)();
+    if(actx.state === 'suspended') actx.resume();
+    const notes = {ok:[[880,0],[1320,.1]], no:[[330,0],[247,.13]], star:[[523,0],[659,.1],[784,.2],[1047,.32]]}[kind];
+    notes.forEach(([f, t]) => {
+      const o = actx.createOscillator(), g = actx.createGain(), t0 = actx.currentTime + t;
+      o.type = kind === 'no' ? 'triangle' : 'sine'; o.frequency.value = f;
+      g.gain.setValueAtTime(0.0001, t0);
+      g.gain.exponentialRampToValueAtTime(kind === 'no' ? 0.1 : 0.2, t0 + 0.02);
+      g.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.25);
+      o.connect(g).connect(actx.destination); o.start(t0); o.stop(t0 + 0.28);
+    });
+  }catch(e){}
+}
+document.addEventListener('pointerdown', () => { try{ actx = actx || new (window.AudioContext || window.webkitAudioContext)(); actx.resume(); }catch(e){} }, {once:true});
 function allPhrases(){
   const en = new Set(['Yes!','Yes! Round, round, round!','Hmm, look again!','Hmm, listen again!','Great job!','Is it round?']);
   const zh = new Set(Object.values(ZH_INTRO));
-  LESSONS.forEach(l => { l.words.forEach(w => en.add(w.w)); l.pages.forEach(p => zh.add(p.zh)); });
+  LESSONS.forEach(l => { l.words.forEach(w => en.add(w.w)); l.pages.forEach(p => { zh.add(p.zh); p.key.toLowerCase().split('|').forEach(k => en.add(k)); }); });
   LESSONS.find(l => l.id === 'd4').words.filter(w => w.w !== 'car').forEach(w => { en.add(`Put the ${w.w} in the car!`); });
   ROUND_YES.concat(ROUND_NO).forEach(([,,a]) => en.add(`Look! ${cap(a)}. Is it round?`));
   ROUND_NO.forEach(([,n]) => en.add(`Yes! The ${n} is not round.`));
@@ -621,7 +693,8 @@ function pickVoice(lang){
   return voices.find(v => v.lang && v.lang.replace('_','-').toLowerCase().startsWith(lang.toLowerCase())) ||
          voices.find(v => v.lang && v.lang.toLowerCase().startsWith(lang.slice(0,2)));
 }
-function say(text, lang = 'en-US', rate){
+async function say(text, lang = 'en-US', rate){
+  if(!TTS_MAP) await Promise.race([ttsReady, wait(2500)]);
   const rec = TTS_MAP && TTS_MAP[(lang.startsWith('zh') ? 'zh|' : 'en|') + text];
   if(rec) return playClip('media/tts/' + rec, lang.startsWith('zh') ? 1 : (S.speed < 1 ? 0.85 : 1));
   player.pause();
@@ -650,10 +723,11 @@ function markDone(step){
   S.prog[lid] = S.prog[lid] || {};
   S.prog[lid][step] = 1;
   store.set('prog', S.prog);
+  sfx('star');
   const tab = document.querySelector(`.steps [data-s="${step}"]`);
   if(tab && !tab.querySelector('.done')) tab.insertAdjacentHTML('beforeend', '<i class="star on done"></i>');
   const all = STEPS.every(s => isDone(lid, s.id));
-  cheer(all ? `整本学完啦！送你一个 ${L().badge}` : '得到一颗星！');
+  cheer(all ? `整本学完啦！得到贴纸 ${L().badge}` : '得到一颗星！');
   return true;
 }
 function confetti(n = 36){
@@ -686,10 +760,25 @@ function starRow(lid){
 }
 function highlight(p){
   let h = esc(p.en);
-  if(p.key) h = h.replace(new RegExp(`\\b(${p.key})\\b`, 'gi'), '<mark>$1</mark>');
+  if(p.key) h = h.replace(new RegExp(`\\b(${p.key})\\b`, 'gi'), '<mark data-a="sayword" data-w="$1">$1</mark>');
   h = h.replace(/\n/g, '<br>');
   if(p.rep) h += ` <span class="x2">×${p.rep}</span>`;
   return h;
+}
+function nextCTA(step){
+  const i = STEPS.findIndex(s => s.id === step), nx = STEPS[i + 1];
+  return nx ? `<button class="toy blue big cta" data-a="step" data-s="${nx.id}">下一步：${nx.ic} ${nx.lb} →</button>`
+            : `<button class="toy blue big cta" data-a="home">学完啦！回首页看贴纸 →</button>`;
+}
+function nextTask(){
+  for(const l of LESSONS){ const s = STEPS.find(s => !isDone(l.id, s.id)); if(s) return {l, s}; }
+  return null;
+}
+function reviewPick(task){
+  const pool = LESSONS.filter(l => isDone(l.id, 'game') && (!task || l.id !== task.l.id));
+  if(!pool.length) return null;
+  const d = new Date();
+  return pool[(d.getFullYear() * 372 + d.getMonth() * 31 + d.getDate()) % pool.length];
 }
 function spItems(){ const l = L(); return l.speak ? l.speak.map(x => ({...l.pages[x.from], ...x, rep:0})) : l.pages; }
 function pageFor(word){ return L().pages.find(p => p.key.toLowerCase().split('|').includes(word.toLowerCase())); }
@@ -702,17 +791,27 @@ function render(){
 }
 
 function renderHome(){
+  const task = nextTask(), rev = reviewPick(task);
   app.innerHTML = `
   <header class="home-head">
     <div class="brand"><div class="brand-moon" aria-hidden="true"></div>
       <div><h1>英语跟读乐园</h1><p>每天一本小书，先听懂，再开口</p></div></div>
   </header>
-  <div class="route" aria-label="每一课的四个步骤">
-    ${STEPS.map((s,i)=>`<div><b>${s.ic}</b><span>${i+1}. ${s.lb}</span><small>${['看图听句子','图配单词','边玩边听','轮到我说'][i]}</small></div>`).join('')}
-  </div>
+  ${task ? `<button class="go" data-a="open" data-id="${task.l.id}" data-s="${task.s.id}">
+      <img src="${task.l.cover}" alt="">
+      <span><small>接着学</small><b>${task.l.day} · ${esc(task.l.title)}</b><span class="next">下一步：${task.s.ic} ${task.s.lb}</span></span>
+      <span class="toy yellow big">开始 ▶</span>
+    </button>` : `<div class="go finished">全部学完啦！等老师发新课 🎉</div>`}
+  ${rev ? `<button class="review" data-a="open" data-id="${rev.id}" data-s="game">
+      <span class="ic">🔁</span><span><b>今天复习一下</b><small>${rev.day} · ${esc(rev.title)} · 玩一局「${rev.games[0].name}」</small></span>
+    </button>` : ''}
+  <h2 class="sec">我的贴纸</h2>
+  <div class="stks">${LESSONS.map(l => STEPS.every(s => isDone(l.id, s.id)) ? `<span class="stk on" title="${l.day}">${l.badge}</span>` : `<span class="stk" title="${l.day}">?</span>`).join('')}</div>
+  <h2 class="sec">全部课程</h2>
   <div class="books">
     ${LESSONS.map(l => `
       <button class="book" data-a="open" data-id="${l.id}">
+        ${STEPS.every(s => isDone(l.id, s.id)) ? `<span class="badge">${l.badge}</span>` : ''}
         <img class="cov" src="${l.cover}" alt="">
         <div class="meta"><span class="day">${l.day}</span><span class="en">${esc(l.title)}</span><span class="zh">${l.zh}</span>${starRow(l.id)}</div>
       </button>`).join('')}
@@ -743,7 +842,7 @@ function renderGuide(){
         <div><b>🎮 玩游戏 · 3 分钟</b><small>听英语指令做选择。能玩对，就说明听懂了。</small></div>
         <div><b>🎤 我来说 · 2 分钟</b><small>听一句，说一句。家长给星星。</small></div>
       </div>
-      <p>可以分两次：早上听故事、认单词，晚上玩游戏、说一说。不必一次做完。</p>
+      <p>首页的「接着学」会直接带到下一步，每一步做完也会出现「下一步」按钮，跟着走就行。可以分两次：早上听故事、认单词，晚上玩游戏、说一说。</p>
     </section>
     <section>
       <span class="kicker">陪读窍门</span>
@@ -755,6 +854,8 @@ function renderGuide(){
         <li><b>不纠正发音。</b>孩子说错了，大人用正确的方式再说一遍就好，不说“不对”。</li>
         <li><b>不开口也正常。</b>很多孩子会先“只听不说”一段时间。能指对图、能做对动作，就是在学。</li>
         <li><b>夸具体的事。</b>“你听到 bears 就找到小熊了！”比“真棒”更有用。</li>
+        <li><b>单独听一个词。</b>句子里带下划线的红色词可以点，点一下只读这个词。</li>
+        <li><b>想让孩子听听自己的声音，</b>在「我来说」里打开「录下我的声音」。录音只留在这台设备上，不会上传，关掉页面就没了。</li>
       </ul>
     </section>
     <section>
@@ -771,7 +872,8 @@ function renderGuide(){
       <span class="kicker">给老师交作业</span>
       <h2>先学会，再录一次</h2>
       <p>四步走完、孩子真的会了，再打开老师的原视频录一次跟读。让孩子边说边做动作，录一遍就够，不用反复重录。这样交上去的视频是孩子真会的样子。</p>
-      <p>每天学新课之前，花 1 分钟玩一个旧课的游戏当复习。隔几天再见一次，记得最牢。</p>
+      <p>首页的「今天复习一下」每天会换一课学过的旧课，玩一局游戏就行，1 分钟。隔几天再见一次，记得最牢。</p>
+      <p>每学完一整课，孩子会得到一张贴纸，贴在首页「我的贴纸」里。让孩子自己去首页看一看、数一数。</p>
     </section>
     <section>
       <span class="kicker">生活里用起来</span>
@@ -825,6 +927,7 @@ function stageStory(st, autoplay = true){
         <button class="toy" data-a="playall">▶▶ 连着听</button>
       </div>
       <div class="dots">${l.pages.map((_,i)=>`<i class="${i<=S.page?'on':''}"></i>`).join('')}</div>
+      ${S.page === n-1 ? `<div class="ctarow">${nextCTA('story')}</div>` : ''}
     </div>
   </div>`;
   if(S.page === n-1){ const lid = S.lid; setTimeout(() => { if(S.lid === lid && S.view === 'lesson') markDone('story'); }, 1200); }
@@ -857,8 +960,9 @@ function stageWords(st){
   const l = L();
   st.innerHTML = `
   <div class="wtop">
-    <p>点一点卡片，听单词。然后请孩子“把 <b>${esc(l.words[0].w)}</b> 指给我看”。</p>
+    <p>点卡片听单词，跟着做动作。然后大人说一个词，请孩子指出来。</p>
     <button class="toy yellow" data-a="allwords">🔊 全部读一遍</button>
+    ${S.seen.size === l.words.length ? nextCTA('words') : ''}
   </div>
   <div class="words">
     ${l.words.map((w,i) => `<button class="word ${S.seen.has(i)?'seen':''}" data-a="word" data-i="${i}">
@@ -871,7 +975,11 @@ async function tapWord(i, el){
   el.classList.remove('pop'); void el.offsetWidth; el.classList.add('pop');
   S.seen.add(i); el.classList.add('seen');
   await say(w.w);
-  if(S.seen.size === L().words.length) markDone('words');
+  if(S.seen.size === L().words.length){
+    markDone('words');
+    const top = document.querySelector('.wtop');
+    if(top && !top.querySelector('.cta')) top.insertAdjacentHTML('beforeend', nextCTA('words'));
+  }
 }
 async function allWords(){
   stopAll();
@@ -893,6 +1001,7 @@ function stageGame(st){
   }
   ({pick:gPickRender, pack:gPackRender, round:gRoundRender, moon:gMoonRender, bath:gBathRender, shop:gShopRender, bus:gBusRender})[g.type](st);
 }
+const INTRO_DONE = new Set();
 function startGame(type){
   stopAll();
   const l = L();
@@ -915,7 +1024,8 @@ function startGame(type){
   } else if(type === 'bus'){
     S.game = {type, i:0, door:false};
   }
-  S.game.intro = true;
+  S.game.intro = !INTRO_DONE.has(type);
+  INTRO_DONE.add(type);
   renderStage();
 }
 function gameHead(prompt, sub, extra=''){
@@ -928,7 +1038,8 @@ function gameHead(prompt, sub, extra=''){
 }
 function gameResult(st, emoji, title, sub){
   st.innerHTML = `<div class="result"><div class="bigemoji">${emoji}</div><h2>${title}</h2><p class="note">${sub}</p>
-    <div class="row"><button class="toy yellow big" data-a="game" data-g="${S.game.type}">再玩一次</button><button class="toy big" data-a="gback">换个游戏</button></div></div>`;
+    <div class="row">${nextCTA('game')}</div>
+    <div class="row"><button class="toy yellow big" data-a="game" data-g="${S.game.type}">🔁 再玩一次</button>${L().games.length > 1 ? '<button class="toy big" data-a="gback">换个游戏</button>' : ''}</div></div>`;
   markDone('game');
 }
 
@@ -953,17 +1064,20 @@ async function gPickSay(){
 }
 async function gPick(i, el){
   const g = S.game;
-  if(el.classList.contains('wrong')) return;
-  const id = runId;
-  if(i === g.order[g.i]){
-    el.classList.add('right');
+  if(g.busy || el.classList.contains('wrong')) return;
+  const id = runId, t = g.order[g.i];
+  if(i === t){
+    g.busy = true;
+    el.classList.add('right'); sfx('ok');
     if(!g.miss) g.score++;
-    await say('Yes!');
-    await wait(500);
+    await wait(300);
+    if(alive(id)) await playClip(L().pages[t].au);
+    await wait(400);
+    g.busy = false;
     if(!alive(id)) return;
     g.i++; renderStage();
   } else {
-    g.miss = true;
+    g.miss = true; sfx('no');
     el.classList.add('wrong');
     await wait(400);
     if(alive(id)) playClip(L().pages[g.order[g.i]].au);
@@ -990,7 +1104,7 @@ async function gPack(i, el){
   const id = runId;
   const w = g.items[i];
   if(i === g.left[0]){
-    g.busy = true;
+    g.busy = true; sfx('ok');
     const car = document.getElementById('car');
     const a = el.querySelector('.pic2').getBoundingClientRect(), b = car.getBoundingClientRect();
     const f = document.createElement('div');
@@ -1023,7 +1137,7 @@ async function gPack(i, el){
       gPackRender(document.getElementById('stage'));
     }
   } else {
-    el.classList.remove('wrong'); void el.offsetWidth; el.classList.add('wrong');
+    el.classList.remove('wrong'); void el.offsetWidth; el.classList.add('wrong'); sfx('no');
     await say(w.w);
     if(alive(id)) { await wait(250); if(alive(id)) say(`Put the ${g.items[g.left[0]].w} in the car!`); }
   }
@@ -1053,16 +1167,19 @@ async function gRoundSay(){
 }
 async function gRound(v, el){
   const g = S.game, id = runId;
+  if(g.busy || !g.items[g.i]) return;
   const [, name, isRound] = g.items[g.i];
   if((v === '1') === isRound){
-    el.classList.add('right');
+    g.busy = true;
+    el.classList.add('right'); sfx('ok');
     if(!g.miss) g.score++;
     await say(isRound ? 'Yes! Round, round, round!' : `Yes! The ${name} is not round.`);
     await wait(400);
+    g.busy = false;
     if(!alive(id)) return;
     g.i++; renderStage();
   } else {
-    g.miss = true;
+    g.miss = true; sfx('no');
     el.classList.remove('wrong'); void el.offsetWidth; el.classList.add('wrong');
     await say('Hmm, look again!');
   }
@@ -1108,18 +1225,18 @@ async function gMoon(b, el){
   if(!s || g.busy) return;
   const id = runId;
   if(b !== s.b){
-    el.classList.remove('wrong'); void el.offsetWidth; el.classList.add('wrong');
+    el.classList.remove('wrong'); void el.offsetWidth; el.classList.add('wrong'); sfx('no');
     await say('Hmm, listen again!'); if(alive(id)) say(s.cmd);
     return;
   }
   g.busy = true;
-  el.classList.add('right');
+  el.classList.add('right'); sfx('ok');
   g.fx.push(s.fx);
   const moon = document.getElementById('moon'), cake = document.getElementById('cake');
   if(s.fx === 'cake') cake.classList.add('show'); else moon.classList.add(s.fx);
   await wait(700);
   for(const [kind, arg] of s.after){
-    if(!alive(id)) return;
+    if(!alive(id)){ g.busy = false; return; }
     if(kind === 'clip') await playClip(arg);
     else if(kind === 'say') await say(arg);
     else if(kind === 'bite'){ cake.classList.add('bite'); g.fx.push('bite'); await wait(500); }
@@ -1146,11 +1263,12 @@ async function gMoon(b, el){
 /* body figure for the bath lesson: every part is its own tap target */
 const BODY_PARTS = ['hair','feet','face','knees','shoulders','toes','hands','nose'];
 const BUB_AT = {hair:[100,22], face:[82,60], nose:[100,68], shoulders:[64,106], hands:[38,190], knees:[83,232], feet:[78,272], toes:[122,290]};
-function bodySVG(hi, live){
+const PART_VIEW = {hair:'50 8 100 90', face:'50 16 100 90', nose:'62 30 76 68', shoulders:'30 60 140 100', hands:'10 140 180 90', knees:'40 190 120 84', feet:'40 244 120 66', toes:'46 256 108 50'};
+function bodySVG(hi, live, view){
   const skin = '#F4C29B', dark = '#E3A77C';
   const f = p => (hi === p ? 'var(--moon)' : null);
   const g = (p, inner) => `<g class="bp" data-p="${p}" ${live ? `data-a="gbath"` : ''}>${inner}</g>`;
-  return `<svg viewBox="0 0 200 305" aria-hidden="true">
+  return `<svg viewBox="${view || '0 0 200 305'}" aria-hidden="true">
     <path d="M58 112 L40 182 M142 112 L160 182" stroke="${skin}" stroke-width="16" stroke-linecap="round"/>
     <path d="M86 190 L82 272 M114 190 L118 272" stroke="${skin}" stroke-width="20" stroke-linecap="round"/>
     <rect x="90" y="92" width="20" height="16" fill="${skin}"/>
@@ -1165,11 +1283,11 @@ function bodySVG(hi, live){
     ${g('face', `<circle cx="100" cy="62" r="36" fill="${f('face')||skin}"/>`)}
     <g pointer-events="none"><circle cx="87" cy="58" r="3.5" fill="#3A2A1A"/><circle cx="113" cy="58" r="3.5" fill="#3A2A1A"/>
       <path d="M88 78 q12 9 24 0" stroke="#A2503A" stroke-width="3" fill="none" stroke-linecap="round"/></g>
-    ${g('nose', `<circle cx="100" cy="68" r="11" fill="transparent"/><circle cx="100" cy="68" r="6" fill="${f('nose')||dark}"/>`)}
+    ${g('nose', `<circle cx="100" cy="68" r="15" fill="transparent"/><circle cx="100" cy="68" r="6" fill="${f('nose')||dark}"/>`)}
     ${g('hair', `<path d="M62 60 Q60 18 100 16 Q140 18 138 60 Q130 34 100 33 Q70 34 62 60Z" fill="${f('hair')||'#5A3A22'}"/>`)}
   </svg>`;
 }
-function wordPic(w){ return w.part ? `<span class="fig">${bodySVG(w.part, false)}</span>` : w.pic; }
+function wordPic(w){ return w.part ? `<span class="fig">${bodySVG(w.part, false, PART_VIEW[w.part])}</span>` : w.pic; }
 
 /* bath: tap the body part the song asks about */
 function gBathRender(st){
@@ -1210,7 +1328,7 @@ async function gBath(part, el){
   if(part === p.part){
     g.busy = true;
     if(!g.miss) g.score++;
-    g.clean.push(part); addBubbles(part);
+    g.clean.push(part); addBubbles(part); sfx('ok');
     await playClip(p.a);
     g.busy = false; g.miss = false;
     if(!alive(id)) return;
@@ -1224,7 +1342,7 @@ async function gBath(part, el){
     gameResult(document.getElementById('stage'), '🛁🫧', `洗对了 ${g.score} / ${g.order.length}`, '今晚洗澡时，一边洗一边问 “Can you wash your hair?”');
   } else {
     g.miss = true;
-    el.classList.remove('nope'); void el.getBoundingClientRect(); el.classList.add('nope');
+    el.classList.remove('nope'); void el.getBoundingClientRect(); el.classList.add('nope'); sfx('no');
     await say(part);
     if(alive(id)){ await wait(250); if(alive(id)) playClip(p.q); }
   }
@@ -1257,6 +1375,7 @@ async function gShop(i, el){
   if(i === want){
     g.busy = true;
     if(!g.miss) g.score++;
+    sfx('ok');
     const a = el.getBoundingClientRect(), b = document.getElementById('basket').getBoundingClientRect();
     const f = document.createElement('div');
     f.className = 'flyer pet-fly'; f.innerHTML = l.words[i].pic;
@@ -1275,7 +1394,7 @@ async function gShop(i, el){
     g.i++; renderStage();
   } else {
     g.miss = true;
-    el.classList.remove('wrong'); void el.offsetWidth; el.classList.add('wrong');
+    el.classList.remove('wrong'); void el.offsetWidth; el.classList.add('wrong'); sfx('no');
     await say(l.words[i].w);
     if(alive(id)){ await wait(250); if(alive(id)) say(`A ${l.words[want].w}, please!`); }
   }
@@ -1322,12 +1441,12 @@ async function gBus(b, el){
   if(!k || g.busy) return;
   const id = runId, bus = document.getElementById('bus');
   if(b !== k){
-    el.classList.remove('wrong'); void el.offsetWidth; el.classList.add('wrong');
+    el.classList.remove('wrong'); void el.offsetWidth; el.classList.add('wrong'); sfx('no');
     await say('Hmm, listen again!'); if(alive(id)) say(BUS_CMDS[k]);
     return;
   }
   g.busy = true;
-  el.classList.add('right');
+  el.classList.add('right'); sfx('ok');
   if(k === 'open'){ g.door = true; bus.classList.add('open'); await say('Open!'); }
   else if(k === 'shut'){ g.door = false; bus.classList.remove('open'); await say('Shut!'); }
   else { bus.classList.add('spin'); await playClip('media/d3_2.mp3'); bus.classList.remove('spin'); }
@@ -1345,30 +1464,27 @@ async function gBus(b, el){
 }
 
 /* ---------- step 4: speak ---------- */
-let mic = {state:'unknown', stream:null};
-async function ensureMic(){
-  if(mic.state !== 'unknown') return mic.state === 'ok';
-  try{
-    if(!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia || !window.MediaRecorder) throw new Error('no');
-    mic.stream = await navigator.mediaDevices.getUserMedia({audio:true});
-    mic.state = 'ok';
-  }catch(e){ mic.state = 'no'; }
-  return mic.state === 'ok';
-}
+const canRecord = !!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia && window.MediaRecorder);
+S.recOn = store.get('recOn', false);
+async function openMic(){ try{ return await navigator.mediaDevices.getUserMedia({audio:true}); }catch(e){ return null; } }
 function stageSpeak(st){
   const l = L();
   if(!S.sp) S.sp = {i:0, phase:'idle', good:new Set(), rec:{}};
   if(S.kara) return karaokeRender(st);
   const items = spItems(), sp = S.sp, p = items[sp.i], n = items.length;
+  const recChip = canRecord ? `<button class="chip" data-a="rec-toggle">🎙️ 录下我的声音：${S.recOn ? '开' : '关'}</button>` : '';
   let panel = '';
-  if(sp.phase === 'idle'){
+  if(sp.phase === 'idle' && sp.good.size === n){
+    panel = `<div class="say">全部说完啦！🎉</div><div class="row">${nextCTA('speak')}</div>
+      <div class="row"><button class="toy big" data-a="sp-go">🔁 再说这一句</button></div>`;
+  } else if(sp.phase === 'idle'){
     panel = `<div class="row"><button class="toy red big" data-a="sp-go">▶ 听一句，说一句</button></div>
-      <p class="note">先播放原声，然后轮到孩子说。家长听完给星星。</p>`;
+      <p class="note">先放原声，再轮到孩子说。家长点 ⭐ 后会自动进入下一句。</p><div class="row">${recChip}</div>`;
   } else if(sp.phase === 'listen'){
     panel = `<div class="say">先听……</div><div class="kid">👂</div>`;
   } else if(sp.phase === 'turn'){
     panel = `<div class="say">轮到你说啦！</div><div class="kid">🗣️</div><div class="meter"><i style="--d:${sp.turnMs}ms"></i></div>
-      ${mic.state==='ok'?'<p class="note">正在录音……</p>':''}`;
+      ${sp.recording ? '<p class="note">正在录音……</p>' : ''}`;
   } else {
     panel = `<div class="say">说得怎么样？</div>
       <div class="row">
@@ -1377,7 +1493,7 @@ function stageSpeak(st){
       </div>
       <div class="row">
         <button class="chip" data-a="sp-orig">🔊 听原声</button>
-        ${sp.rec[sp.i]?'<button class="chip" data-a="sp-mine">🎧 听我自己</button>':''}
+        ${sp.rec[sp.i] ? '<button class="chip" data-a="sp-mine">🎧 听我自己</button>' : ''}
       </div>
       <p class="note">说出关键词就可以给星星，不用每个词都说对。</p>`;
   }
@@ -1406,39 +1522,38 @@ async function spGo(){
   if(!alive(id)) return;
   const dur = (durations[p.au] || 3) / S.speed;
   sp.turnMs = Math.round(Math.min(12000, dur * 1100 + 1200));
-  const canRec = await ensureMic();
-  if(!alive(id)) return;
+  const stream = (canRecord && S.recOn) ? await openMic() : null;
+  if(!alive(id)){ if(stream) stream.getTracks().forEach(t => t.stop()); return; }
+  sp.recording = !!stream;
   sp.phase = 'turn'; renderStage();
-  let rec, chunks = [];
-  if(canRec){
-    try{
-      rec = new MediaRecorder(mic.stream);
-      rec.ondataavailable = e => e.data.size && chunks.push(e.data);
-      rec.start();
-    }catch(e){ rec = null; }
+  let rec = null; const chunks = [];
+  if(stream){
+    try{ rec = new MediaRecorder(stream); rec.ondataavailable = e => e.data.size && chunks.push(e.data); rec.start(); }catch(e){ rec = null; }
   }
   await wait(sp.turnMs);
-  if(rec){
-    await new Promise(r => { rec.onstop = r; rec.stop(); });
-    if(chunks.length){
-      if(sp.rec[sp.i]) URL.revokeObjectURL(sp.rec[sp.i]);
-      sp.rec[sp.i] = URL.createObjectURL(new Blob(chunks, {type: rec.mimeType || 'audio/webm'}));
-    }
+  if(rec && rec.state !== 'inactive') await new Promise(r => { rec.onstop = r; rec.stop(); });
+  if(stream) stream.getTracks().forEach(t => t.stop());
+  if(chunks.length){
+    if(sp.rec[sp.i]) URL.revokeObjectURL(sp.rec[sp.i]);
+    sp.rec[sp.i] = URL.createObjectURL(new Blob(chunks, {type: (rec && rec.mimeType) || 'audio/mp4'}));
   }
   if(!alive(id)) return;
   sp.phase = 'rate'; renderStage();
-  if(sp.rec[sp.i]) playClip(sp.rec[sp.i], 1);
+  if(chunks.length) playClip(sp.rec[sp.i], 1);
 }
-function spGood(){
-  const sp = S.sp, n = spItems().length;
-  sp.good.add(sp.i);
-  say('Great job!');
-  if(sp.good.size === n) markDone('speak');
-  else confetti(14);
+async function spGood(){
+  stopAll();
+  const id = runId, sp = S.sp, n = spItems().length;
+  sp.good.add(sp.i); sfx('ok');
+  const allDone = sp.good.size === n;
   const next = [...Array(n).keys()].find(i => i > sp.i && !sp.good.has(i)) ?? [...Array(n).keys()].find(i => !sp.good.has(i));
   if(next !== undefined) sp.i = next;
-  sp.phase = 'idle';
-  renderStage();
+  sp.phase = 'idle'; renderStage();
+  if(allDone){ markDone('speak'); return; }
+  confetti(14);
+  await say('Great job!');
+  await wait(500);
+  if(alive(id) && S.view === 'lesson' && S.step === 'speak' && !S.kara) spGo();
 }
 
 /* karaoke for the song */
@@ -1491,15 +1606,17 @@ let wakeLock = null;
 async function keepAwake(){ try{ if('wakeLock' in navigator && !wakeLock){ wakeLock = await navigator.wakeLock.request('screen'); wakeLock.addEventListener('release', () => wakeLock = null); } }catch(e){} }
 
 const actions = {
-  open(b){ stopAll(); S.view='lesson'; S.lid=b.dataset.id; S.step='story'; S.page=0; S.seen=new Set(); S.game=null; S.sp=null; S.kara=null; keepAwake(); render(); scrollTo(0,0); },
+  open(b){ stopAll(); S.view='lesson'; S.lid=b.dataset.id; S.step=b.dataset.s || 'story'; S.page=0; S.seen=new Set(); S.game=null; S.sp=null; S.kara=null; keepAwake(); prefetchLesson(L()); render(); scrollTo(0,0); },
   home(){ stopAll(); S.view='home'; render(); scrollTo(0,0); },
   guide(){ stopAll(); S.view='guide'; render(); scrollTo(0,0); },
   speed(b){ S.speed = parseFloat(b.dataset.v); store.set('speed', S.speed);
     document.querySelectorAll('.speed button').forEach(x => x.classList.toggle('on', x === b));
-    if(!player.paused && !player.src.startsWith('blob:')) player.playbackRate = S.speed; },
+    if(!player.paused && !curSrc.startsWith('blob:')) player.playbackRate = S.speed; },
   step(b){ stopAll(); S.step=b.dataset.s; if(S.step!=='game') S.game=null; S.kara=null; if(S.sp) S.sp.phase='idle';
-    document.querySelectorAll('.steps button').forEach(x => x.classList.toggle('on', x === b)); renderStage();
-    if(S.step==='speak') ensureMic(); },
+    document.querySelectorAll('.steps button').forEach(x => x.classList.toggle('on', x.dataset.s === S.step)); renderStage();
+    if(b.classList.contains('cta')) document.querySelector('.steps').scrollIntoView({block:'start', behavior:'smooth'}); },
+  sayword(b){ stopAll(); say(b.dataset.w.toLowerCase()); },
+  'rec-toggle'(){ S.recOn = !S.recOn; store.set('recOn', S.recOn); renderStage(); },
   replay(){ stopAll(); playPage(); },
   prev(){ if(S.page>0){ stopAll(); S.page--; renderStage(); } },
   next(){ if(S.page<L().pages.length-1){ stopAll(); S.page++; renderStage(); } },
@@ -1544,7 +1661,12 @@ app.addEventListener('click', e => {
 app.addEventListener('keydown', e => {
   if((e.key === 'Enter' || e.key === ' ') && e.target.matches('[role="button"][data-a]')){ e.preventDefault(); e.target.click(); }
 });
-document.addEventListener('visibilitychange', () => { if(document.visibilityState === 'visible' && S.view === 'lesson') keepAwake(); });
+document.addEventListener('visibilitychange', () => {
+  if(document.visibilityState === 'hidden'){
+    stopAll();
+    if(S.view === 'lesson' && S.step === 'speak'){ if(S.kara) S.kara.playing = false; if(S.sp) S.sp.phase = 'idle'; renderStage(); }
+  } else if(S.view === 'lesson') keepAwake();
+});
 
 render();
 </script>
