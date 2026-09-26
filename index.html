@@ -1617,13 +1617,32 @@ async function karaokePlay(){
   k.playing = false; renderStage();
 }
 
+/* ============ updates ============ */
+/* the site is cached for a while; check a tiny version file and reload on the home screen when a new version is out */
+const APP_VERSION = '20260926200757';
+let updateReady = null;
+function checkUpdate(){
+  if(APP_VERSION.startsWith('__')) return;
+  fetch('version.txt?t=' + Date.now(), {cache:'no-store'}).then(r => r.ok ? r.text() : '').then(v => {
+    v = v.trim();
+    if(!v || v === APP_VERSION) return;
+    updateReady = v;
+    if(S.view === 'home') applyUpdate();
+  }).catch(() => {});
+}
+function applyUpdate(){
+  if(!updateReady) return;
+  if(new URLSearchParams(location.search).get('v') === updateReady){ updateReady = null; return; }  /* already reloaded once for this version: never loop */
+  location.replace(location.pathname + '?v=' + updateReady);
+}
+
 /* ============ events ============ */
 let wakeLock = null;
 async function keepAwake(){ try{ if('wakeLock' in navigator && !wakeLock){ wakeLock = await navigator.wakeLock.request('screen'); wakeLock.addEventListener('release', () => wakeLock = null); } }catch(e){} }
 
 const actions = {
   open(b){ stopAll(); S.view='lesson'; S.lid=b.dataset.id; S.step=b.dataset.s || 'story'; S.page=0; S.seen=new Set(); S.game=null; S.sp=null; S.kara=null; keepAwake(); prefetchLesson(L()); render(); scrollTo(0,0); },
-  home(){ stopAll(); S.view='home'; render(); scrollTo(0,0); },
+  home(){ stopAll(); if(updateReady) return applyUpdate(); S.view='home'; render(); scrollTo(0,0); },
   guide(){ stopAll(); S.view='guide'; render(); scrollTo(0,0); },
   speed(b){ S.speed = parseFloat(b.dataset.v); store.set('speed', S.speed);
     document.querySelectorAll('.speed button').forEach(x => x.classList.toggle('on', x === b));
@@ -1681,10 +1700,14 @@ document.addEventListener('visibilitychange', () => {
   if(document.visibilityState === 'hidden'){
     stopAll();
     if(S.view === 'lesson' && S.step === 'speak'){ if(S.kara) S.kara.playing = false; if(S.sp) S.sp.phase = 'idle'; renderStage(); }
-  } else if(S.view === 'lesson') keepAwake();
+  } else {
+    checkUpdate();
+    if(S.view === 'lesson') keepAwake();
+  }
 });
 
 render();
+checkUpdate();
 </script>
 
 </body>
