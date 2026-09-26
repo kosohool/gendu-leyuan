@@ -10,50 +10,46 @@
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="icon" href="icon-180.png">
 <title>英语跟读乐园</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Andika:wght@400;700&family=Baloo+2:wght@600;700;800&display=swap">
 <style>
+@font-face{font-family:"Andika";src:url(fonts/andika-400.woff2) format("woff2");font-weight:400;font-display:swap}
+@font-face{font-family:"Andika";src:url(fonts/andika-700.woff2) format("woff2");font-weight:700;font-display:swap}
+@font-face{font-family:"Fredoka";src:url(fonts/fredoka.woff2) format("woff2");font-weight:300 700;font-display:swap}
+@font-face{font-family:"KuaiLe";src:url(fonts/kuaile.woff2) format("woff2");font-display:swap}
+/* one bright picture-book look on every device, including phones set to dark mode */
 :root{
-  --ground:#E8F2FA; --surface:#FFFFFF; --surface-2:#F2F7FC; --ink:#1C2840; --ink-soft:#55617A; --line:#D3E0EC;
-  --moon:#FFC83D; --moon-deep:#D99A00; --moon-ink:#3A2A00;
+  color-scheme:light;
+  --ground:#E4F5FF; --sky-top:#BFE6FF; --surface:#FFFFFF; --surface-2:#F1F8FE; --ink:#1C2840; --ink-soft:#55617A; --line:#CFE0EE;
+  --moon:#FFC83D; --moon-deep:#E0A200; --moon-ink:#3A2A00;
   --tomato:#FF6A55; --tomato-deep:#D94430;
   --grass:#27A36D; --grass-deep:#1B7C52;
-  --sky:#3D7DD8; --sky-deep:#2A5DAA;
-  --night:#172647; --night-2:#2B3F72;
-  --shadow:rgba(28,40,64,.14);
-  --f-display:"Baloo 2","PingFang SC","Hiragino Sans GB","Microsoft YaHei",system-ui,sans-serif;
-  --f-read:"Andika","Baloo 2",system-ui,sans-serif;
+  --sky:#3D7DD8; --sky-deep:#2A5DAA; --title:#2A5DAA;
+  --paper:#FFFDF6; --paper-edge:#E6D8B6; --paper-ink:#8A5A12;
+  --night:#23407A; --night-2:#2B3F72;
+  --shadow:rgba(42,93,170,.14);
+  --f-display:"Fredoka","PingFang SC","Hiragino Sans GB","Microsoft YaHei",system-ui,sans-serif;
+  --f-fun:"Fredoka","KuaiLe","PingFang SC","Hiragino Sans GB","Microsoft YaHei",system-ui,sans-serif;
+  --f-read:"Andika","Fredoka",system-ui,sans-serif;
   --f-zh:"PingFang SC","Hiragino Sans GB","Microsoft YaHei","Noto Sans SC",system-ui,sans-serif;
-}
-@media (prefers-color-scheme: dark){
-  :root:not([data-theme="light"]){
-    color-scheme:dark;
-    --ground:#0F1729; --surface:#18233B; --surface-2:#1F2C48; --ink:#F2EEE3; --ink-soft:#A9B3C7; --line:#2C3B5C;
-    --moon:#FFCF4D; --moon-deep:#C99000; --moon-ink:#2E2200;
-    --tomato:#FF7A66; --tomato-deep:#C9442F; --grass:#35BF83; --grass-deep:#1E8A5A;
-    --sky:#6FA4F0; --sky-deep:#3F72C0; --shadow:rgba(0,0,0,.35);
-  }
-}
-:root[data-theme="dark"]{
-  color-scheme:dark;
-  --ground:#0F1729; --surface:#18233B; --surface-2:#1F2C48; --ink:#F2EEE3; --ink-soft:#A9B3C7; --line:#2C3B5C;
-  --moon:#FFCF4D; --moon-deep:#C99000; --moon-ink:#2E2200;
-  --tomato:#FF7A66; --tomato-deep:#C9442F; --grass:#35BF83; --grass-deep:#1E8A5A;
-  --sky:#6FA4F0; --sky-deep:#3F72C0; --shadow:rgba(0,0,0,.35);
 }
 *{box-sizing:border-box}
 html,body{min-height:100%}
 body{background:var(--ground);color:var(--ink);font-family:var(--f-zh);font-size:16px;line-height:1.55;-webkit-tap-highlight-color:transparent}
-#app{max-width:980px;margin:0 auto;padding-inline:16px;padding-block:14px 40px}
+#app{position:relative;z-index:1;max-width:980px;margin:0 auto;padding-inline:16px;padding-block:14px 60px}
+.scenery{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;background:linear-gradient(var(--sky-top),var(--ground) 55%)}
+.scenery .cl{position:absolute;height:28px;border-radius:28px;background:#fff;opacity:.85}
+.scenery .cl::before{content:"";position:absolute;left:22%;top:-16px;width:44%;height:36px;border-radius:50%;background:#fff}
+.scenery .c1{width:120px;top:70px;right:6%}.scenery .c2{width:90px;top:210px;left:4%}.scenery .c3{width:70px;top:420px;right:18%;opacity:.6}
+.scenery .hill{position:absolute;bottom:-90px;height:190px;border-radius:50%}
+.scenery .h1{left:-20%;right:25%;background:#9ED889}.scenery .h2{left:40%;right:-25%;bottom:-110px;background:#7FC96E}
+.fun{font-family:var(--f-fun);font-weight:400;font-synthesis:none}
 button{font:inherit;color:inherit;border:0;background:none;cursor:pointer;touch-action:manipulation}
 button:focus-visible,[tabindex]:focus-visible{outline:3px solid var(--sky);outline-offset:3px}
 img{display:block;max-width:100%}
-h1,h2,h3{font-family:var(--f-display);text-wrap:balance;margin:0;line-height:1.2}
+h1,h2,h3{font-family:var(--f-fun);font-weight:400;font-synthesis:none;text-wrap:balance;margin:0;line-height:1.25}
 
 /* toy buttons: a solid "base" under each one, like a plastic block */
 .toy{display:inline-flex;align-items:center;justify-content:center;gap:.4em;min-height:56px;padding:.5em 1.1em;border-radius:18px;
-  font-family:var(--f-display);font-weight:700;font-size:1.15rem;background:var(--surface);color:var(--ink);
+  font-family:var(--f-display);font-weight:600;font-size:1.15rem;background:var(--surface);color:var(--ink);
   box-shadow:0 5px 0 var(--line);transition:transform .08s, box-shadow .08s}
 .toy:active{transform:translateY(4px);box-shadow:0 1px 0 var(--line)}
 .toy.yellow{background:var(--moon);color:var(--moon-ink);box-shadow:0 5px 0 var(--moon-deep)}
@@ -71,46 +67,68 @@ h1,h2,h3{font-family:var(--f-display);text-wrap:balance;margin:0;line-height:1.2
 /* ---------- home ---------- */
 .home-head{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap;padding-block:10px 18px}
 .brand{display:flex;align-items:center;gap:14px}
-.brand-moon{width:58px;height:58px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#FFE38A,var(--moon) 60%,var(--moon-deep));box-shadow:0 0 0 6px color-mix(in srgb,var(--moon) 25%,transparent)}
-.brand h1{font-size:2rem;font-weight:800;letter-spacing:.02em}
+.brand h1{font-size:2.2rem;color:var(--title);letter-spacing:.03em}
 .brand p{margin:0;color:var(--ink-soft);font-size:.95rem}
 .route{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-block:0 22px}
 .route div{background:var(--surface);border-radius:16px;padding:12px 10px;text-align:center;border:2px solid var(--line)}
 .route b{display:block;font-family:var(--f-display);font-size:1.6rem;line-height:1}
 .route span{display:block;font-weight:700;margin-top:4px}
 .route small{color:var(--ink-soft);font-size:.8rem}
-.books{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:18px}
-.book{display:flex;flex-direction:column;text-align:left;background:var(--surface);border-radius:22px;overflow:hidden;box-shadow:0 6px 0 var(--line);transition:transform .12s}
+.books{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:14px}
+@media (max-width:540px){ .book .meta{padding:10px 12px 12px} .book .en{font-size:1.05rem} .book .star{width:20px;height:20px} .book .stars small{display:none} .book .badge{width:44px;height:44px;font-size:1.5rem} }
+.book{display:flex;flex-direction:column;text-align:left;background:var(--surface);border-radius:22px;overflow:hidden;box-shadow:0 5px 0 var(--line);transition:transform .12s}
 .book:active{transform:translateY(4px);box-shadow:0 2px 0 var(--line)}
 .book .cov{aspect-ratio:4/3;width:100%;object-fit:cover;background:var(--surface-2)}
 .book .meta{padding:12px 16px 16px;display:grid;gap:4px}
-.book .day{font-family:var(--f-display);font-weight:700;color:var(--sky);font-size:.95rem;letter-spacing:.06em;text-transform:uppercase}
-.book .en{font-family:var(--f-read);font-weight:700;font-size:1.35rem;line-height:1.2}
+.book .day{font-family:var(--f-display);font-weight:600;color:var(--sky);font-size:.9rem;letter-spacing:.06em;text-transform:uppercase}
+.book .en{font-family:var(--f-display);font-weight:600;font-size:1.25rem;line-height:1.2}
 .book .zh{color:var(--ink-soft)}
 .stars{display:flex;gap:6px;margin-top:6px;align-items:center;flex-wrap:wrap}
 .star{width:26px;height:26px;display:inline-block;background:var(--line);clip-path:polygon(50% 0,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)}
 .star.on{background:var(--moon)}
 .stars small{color:var(--ink-soft);margin-left:4px}
-.guide-card{margin-top:22px;display:flex;gap:16px;align-items:center;justify-content:space-between;flex-wrap:wrap;background:var(--night);color:#F4F1E8;border-radius:22px;padding:18px 20px}
-.foot{margin:18px 4px 0;color:var(--ink-soft);font-size:.82rem;max-width:60ch}
-.guide-card h3{font-size:1.25rem;color:#FFE08A}
+.guide-card{margin-top:22px;display:flex;gap:16px;align-items:center;justify-content:space-between;flex-wrap:wrap;background:var(--night);color:#F4F1E8;border-radius:22px;padding:18px 20px;box-shadow:0 5px 0 #172C57}
+.foot{margin:18px 4px 0;color:#3F5F3A;font-size:.82rem;max-width:60ch}
+.guide-card h3{font-size:1.35rem;color:#FFE08A}
 .guide-card p{margin:.2em 0 0;opacity:.85;max-width:52ch;font-size:.95rem}
+
+/* ---------- Lulu, the moon friend ---------- */
+.coach{display:flex;align-items:center;gap:10px;margin:0 0 12px}
+.coach.home{margin:6px 0 14px}
+.lulu{display:block;flex:none;width:64px;height:64px;animation:float 3.2s ease-in-out infinite;cursor:pointer}
+.coach.home .lulu{width:92px;height:92px}
+.lulu svg{width:100%;height:100%;display:block;overflow:visible}
+.lulu .eh,.lulu .mh,.lulu .mo{display:none}
+.lulu.yay .en,.lulu.yay .mn{display:none}
+.lulu.yay .eh,.lulu.yay .mh{display:inline}
+.lulu.oops .mn{display:none}
+.lulu.oops .mo{display:inline}
+.lulu.yay{animation:hop .45s ease 2}
+.lulu.oops{animation:tilt .6s ease}
+.lulu .spk{transform-origin:85px 21px;animation:twinkle 2.4s ease-in-out infinite}
+@keyframes float{50%{transform:translateY(-5px)}}
+@keyframes hop{40%{transform:translateY(-16px) rotate(-8deg)}}
+@keyframes tilt{30%{transform:rotate(-12deg)}70%{transform:rotate(7deg)}}
+@keyframes twinkle{50%{transform:scale(.4);opacity:.4}}
+.bub{position:relative;background:#fff;border-radius:18px 18px 18px 6px;padding:10px 14px;font-size:1rem;line-height:1.45;box-shadow:0 3px 0 var(--line);max-width:34em}
+.bub b{color:var(--tomato-deep)}
+.coach.home .bub{font-size:1.1rem}
 
 /* ---------- lesson chrome ---------- */
 .bar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding-block:4px 12px}
 .bar .title{flex:1;min-width:160px}
-.bar .title b{display:block;font-family:var(--f-read);font-size:1.3rem;line-height:1.2}
+.bar .title b{display:block;font-family:var(--f-display);font-weight:600;font-size:1.3rem;line-height:1.2}
 .bar .title small{color:var(--ink-soft)}
 .speed{display:inline-flex;background:var(--surface);border-radius:18px;padding:4px;gap:4px;border:2px solid var(--line)}
 .speed button{min-height:46px;padding:0 14px;border-radius:14px;font-family:var(--f-display);font-weight:700;font-size:1rem;color:var(--ink-soft)}
 .speed button.on{background:var(--moon);color:var(--moon-ink)}
 .steps{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px}
-.steps button{position:relative;display:flex;flex-direction:column;align-items:center;gap:2px;padding:10px 4px 8px;border-radius:18px;background:var(--surface);box-shadow:0 5px 0 var(--line);font-family:var(--f-display);font-weight:700}
+.steps button{position:relative;display:flex;flex-direction:column;align-items:center;gap:2px;padding:10px 4px 8px;border-radius:18px;background:var(--surface);box-shadow:0 5px 0 var(--line);font-family:var(--f-fun);font-weight:400;font-synthesis:none}
 .steps button .ic{font-size:1.9rem;line-height:1}
-.steps button .lb{font-size:1rem}
+.steps button .lb{font-size:1.08rem}
 .steps button.on{background:var(--sky);color:#fff;box-shadow:0 5px 0 var(--sky-deep)}
 .steps button .done{position:absolute;top:6px;right:8px;width:20px;height:20px}
-.stage{background:var(--surface);border-radius:26px;padding:18px;box-shadow:0 8px 24px var(--shadow)}
+.stage{background:var(--surface);border-radius:28px;padding:18px;box-shadow:0 6px 0 var(--line),0 16px 30px var(--shadow)}
 
 /* ---------- story ---------- */
 .story{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:22px;align-items:center}
@@ -160,7 +178,7 @@ h1,h2,h3{font-family:var(--f-display);text-wrap:balance;margin:0;line-height:1.2
 .gmenu{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px}
 .gcard{display:flex;flex-direction:column;align-items:flex-start;gap:6px;text-align:left;padding:18px;border-radius:22px;background:var(--surface-2);box-shadow:0 6px 0 var(--line)}
 .gcard .big{font-size:3rem;line-height:1}
-.gcard h3{font-size:1.35rem}
+.gcard h3{font-size:1.45rem;color:var(--title)}
 .gcard p{margin:0;color:var(--ink-soft);font-size:.95rem}
 .ghead{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:14px}
 .ghead .prompt{flex:1;min-width:200px}
@@ -231,7 +249,7 @@ h1,h2,h3{font-family:var(--f-display);text-wrap:balance;margin:0;line-height:1.2
 
 /* ---------- speak ---------- */
 .turn{margin-top:16px;border-radius:20px;padding:16px;background:var(--surface-2);display:grid;gap:12px;justify-items:center;text-align:center}
-.turn .say{font-family:var(--f-display);font-weight:800;font-size:1.7rem}
+.turn .say{font-family:var(--f-fun);font-weight:400;font-synthesis:none;font-size:1.8rem;color:var(--title)}
 .turn .kid{font-size:4rem;line-height:1;animation:pulse 1s ease-in-out infinite}
 .meter{width:100%;max-width:420px;height:14px;border-radius:10px;background:var(--line);overflow:hidden}
 .meter i{display:block;height:100%;width:100%;background:var(--tomato);transform-origin:left;animation:drain var(--d,4s) linear forwards}
@@ -246,7 +264,7 @@ h1,h2,h3{font-family:var(--f-display);text-wrap:balance;margin:0;line-height:1.2
 /* ---------- guide ---------- */
 .guide{max-width:720px;margin:0 auto}
 .guide section{background:var(--surface);border-radius:22px;padding:18px 20px;margin-bottom:16px}
-.guide h2{font-size:1.5rem;margin-bottom:8px}
+.guide h2{font-size:1.6rem;margin-bottom:8px;color:var(--title)}
 .guide h3{font-size:1.15rem;margin:14px 0 4px}
 .guide p,.guide li{max-width:65ch}
 .guide ol,.guide ul{padding-left:1.3em;margin:.4em 0}
@@ -255,18 +273,20 @@ h1,h2,h3{font-family:var(--f-display);text-wrap:balance;margin:0;line-height:1.2
 .guide .plan div{background:var(--surface-2);border-radius:16px;padding:12px}
 .guide .plan b{font-family:var(--f-display);font-size:1.05rem}
 .guide .plan small{display:block;color:var(--ink-soft)}
-.guide .kicker{font-family:var(--f-display);color:var(--sky);font-weight:700;letter-spacing:.08em;text-transform:uppercase;font-size:.85rem}
+.guide .kicker{font-family:var(--f-display);color:var(--sky);font-weight:600;letter-spacing:.08em;text-transform:uppercase;font-size:.85rem}
 
 /* ---------- celebration ---------- */
 .cheer{position:fixed;inset:0;z-index:60;display:grid;place-items:center;pointer-events:none}
 .cheer .card{background:var(--surface);border-radius:28px;padding:22px 34px;text-align:center;box-shadow:0 20px 60px var(--shadow);animation:pop .5s}
 .cheer .bigstar{width:110px;height:110px;margin:0 auto 6px;background:var(--moon);clip-path:polygon(50% 0,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)}
-.cheer b{font-family:var(--f-display);font-size:1.8rem}
+.cheer b{font-family:var(--f-fun);font-weight:400;font-synthesis:none;font-size:1.9rem;color:var(--title)}
+.cheer .lulu{width:110px;height:110px;margin:0 auto -8px}
+.cheer .gift{font-size:4.2rem;line-height:1.1;display:block}
 .confetti{position:fixed;top:-20px;width:10px;height:14px;z-index:61;pointer-events:none;animation:fall 1.8s ease-in forwards}
 @keyframes fall{to{transform:translateY(105vh) rotate(540deg)}}
 .result{display:grid;justify-items:center;gap:14px;text-align:center;padding:20px 0}
 .result .bigemoji{font-size:5rem;line-height:1}
-.result h2{font-size:2rem}
+.result h2{font-size:2.1rem;color:var(--title)}
 
 .word .pic2 img{height:72px;width:auto;max-width:130px;object-fit:contain;border-radius:10px}
 .word .pic2 .fig svg,.word .fig svg{width:100px;height:74px;border-radius:12px;background:#DDF1FB}
@@ -277,7 +297,7 @@ h1,h2,h3{font-family:var(--f-display);text-wrap:balance;margin:0;line-height:1.2
 .bp{cursor:pointer}
 .bp.nope{animation:blink .5s}
 @keyframes blink{50%{opacity:.25}}
-.bub{fill:#fff;stroke:#9CCBE8;stroke-width:1.2;opacity:.92;animation:bubble .5s ease-out}
+.suds{fill:#fff;stroke:#9CCBE8;stroke-width:1.2;opacity:.92;animation:bubble .5s ease-out}
 @keyframes bubble{from{r:0;opacity:0}}
 /* pet shop */
 .counter{display:flex;align-items:center;gap:12px;flex-wrap:wrap;background:var(--surface-2);border-radius:20px;padding:12px 16px}
@@ -316,19 +336,22 @@ img{-webkit-touch-callout:none;-webkit-user-drag:none}
 .go{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:16px;width:100%;text-align:left;background:var(--surface);border-radius:24px;padding:14px;border:3px solid var(--moon);box-shadow:0 6px 0 var(--moon-deep)}
 .go:active{transform:translateY(4px);box-shadow:0 2px 0 var(--moon-deep)}
 .go img{width:128px;aspect-ratio:4/3;object-fit:cover;border-radius:16px}
-.go small{display:block;font-family:var(--f-display);font-weight:700;color:var(--sky);letter-spacing:.06em}
-.go b{display:block;font-family:var(--f-read);font-size:1.45rem;line-height:1.2}
+.go small{display:block;font-family:var(--f-display);font-weight:600;color:var(--sky);letter-spacing:.06em}
+.go b{display:block;font-family:var(--f-display);font-weight:600;font-size:1.4rem;line-height:1.2}
 .go .next{color:var(--ink-soft)}
-.go .toy{pointer-events:none}
+.go .toy{pointer-events:none;background:var(--tomato);color:#fff;box-shadow:0 5px 0 var(--tomato-deep)}
 .go.finished{display:block;text-align:center;font-family:var(--f-display);font-weight:700;font-size:1.25rem;border-color:var(--line);box-shadow:0 6px 0 var(--line)}
 .review{display:flex;align-items:center;gap:14px;margin-top:14px;width:100%;text-align:left;background:var(--surface);border-radius:20px;padding:12px 16px;box-shadow:0 5px 0 var(--line)}
 .review .ic{font-size:2.2rem;line-height:1}
 .review b{display:block;font-family:var(--f-display);font-size:1.15rem}
 .review small{color:var(--ink-soft)}
-.sec{font-size:1.3rem;margin:26px 0 12px}
+.sec{font-size:1.4rem;margin:26px 0 12px;color:var(--title)}
 .stks{display:flex;gap:12px;flex-wrap:wrap}
-.stk{width:66px;height:66px;border-radius:50%;display:grid;place-items:center;font-size:2.2rem;line-height:1;background:var(--surface);border:3px dashed var(--line);color:var(--line);font-family:var(--f-display);font-weight:800}
-.stk.on{border:3px solid var(--moon);background:color-mix(in srgb,var(--moon) 22%,var(--surface))}
+.stickerbook{margin-top:22px;background:var(--paper);border-radius:20px;padding:14px 16px 18px;box-shadow:0 5px 0 var(--paper-edge);transform:rotate(-.6deg)}
+.stickerbook h2{font-size:1.35rem;color:var(--paper-ink);margin-bottom:10px}
+.stk{width:66px;height:66px;border-radius:50%;display:grid;place-items:center;font-size:2.2rem;line-height:1;background:transparent;border:3px dashed var(--paper-edge);color:var(--paper-edge);font-family:var(--f-display);font-weight:700}
+.stk.on{border:none;background:#fff;box-shadow:0 3px 8px rgba(0,0,0,.16);transform:rotate(-8deg)}
+.stk.on:nth-child(even){transform:rotate(7deg)}
 .book{position:relative}
 .book .badge{position:absolute;top:10px;right:10px;width:56px;height:56px;border-radius:50%;display:grid;place-items:center;font-size:1.9rem;background:var(--surface);border:3px solid var(--moon);box-shadow:0 3px 0 var(--moon-deep)}
 @media (max-width:540px){ .go{grid-template-columns:1fr} .go img{display:none} .go .toy{justify-self:start} }
@@ -353,6 +376,7 @@ img{-webkit-touch-callout:none;-webkit-user-drag:none}
 </head>
 <body>
 <div id="app"></div>
+<div class="scenery" aria-hidden="true"><i class="cl c1"></i><i class="cl c2"></i><i class="cl c3"></i><i class="hill h1"></i><i class="hill h2"></i></div>
 
 <script>
 /* ============ lesson data ============ */
@@ -364,7 +388,7 @@ const BIGICON = '<svg viewBox="0 0 50 36" aria-hidden="true"><circle cx="8" cy="
 
 const LESSONS = [
 {
-  id:'d1', day:'Day 1', title:'Bath Song', zh:'洗澡歌', cover:'media/d1_1.jpg', badge:'🛁',
+  id:'d1', short:'洗澡歌', day:'Day 1', title:'Bath Song', zh:'洗澡歌', cover:'media/d1_1.jpg', badge:'🛁',
   pages:[
     {en:'Can you wash your hair?\nI can wash my hair.',           key:'hair',      part:'hair',      zh:'你会洗头发吗？我会洗我的头发。', act:'双手在头上揉一揉',     img:'media/d1_1.jpg', au:'media/d1_1.mp3', q:'media/d1q_1.mp3', a:'media/d1a_1.mp3'},
     {en:'Can you wash your feet?\nI can wash my feet.',           key:'feet',      part:'feet',      zh:'你会洗脚吗？我会洗我的脚。',     act:'弯下腰搓搓小脚',       img:'media/d1_2.jpg', au:'media/d1_2.mp3', q:'media/d1q_2.mp3', a:'media/d1a_2.mp3'},
@@ -417,7 +441,7 @@ const LESSONS = [
   ]
 },
 {
-  id:'d2', day:'Day 2', title:'The Pet Store', zh:'宠物店', cover:'media/d2_cover.jpg', badge:'🐶',
+  id:'d2', short:'宠物店', day:'Day 2', title:'The Pet Store', zh:'宠物店', cover:'media/d2_cover.jpg', badge:'🐶',
   pages:[
     {en:'Here is a kitten.', key:'kitten', zh:'这儿有一只小猫。',   act:'学小猫“喵喵”，用手洗洗脸', img:'media/d2_1.jpg', au:'media/d2_1.mp3'},
     {en:'Here is a puppy.',  key:'puppy',  zh:'这儿有一只小狗。',   act:'学小狗“汪汪”，摇摇尾巴',   img:'media/d2_2.jpg', au:'media/d2_2.mp3'},
@@ -445,7 +469,7 @@ const LESSONS = [
   ]
 },
 {
-  id:'d3', day:'Day 3', title:'The Wheels on the Bus', zh:'巴士上的轮子（儿歌）', cover:'media/d3_1.jpg', badge:'🚌',
+  id:'d3', short:'巴士儿歌', day:'Day 3', title:'The Wheels on the Bus', zh:'巴士上的轮子（儿歌）', cover:'media/d3_1.jpg', badge:'🚌',
   pages:[
     {en:'The wheels on the bus go round and round.', key:'wheels|round', zh:'巴士上的轮子转呀转。', act:'两只手在身前转圈圈', img:'media/d3_1.jpg', au:'media/d3_1.mp3'},
     {en:'Round and round, round and round.',         key:'round',        zh:'转呀转，转呀转。',     act:'继续转圈圈，越转越快', img:'media/d3_2.jpg', au:'media/d3_2.mp3'},
@@ -472,7 +496,7 @@ const LESSONS = [
   ]
 },
 {
-  id:'d4', day:'Day 4', title:'Going on Vacation', zh:'出发去度假', cover:'media/d4_cover.jpg', badge:'🚙', pickPic:true,
+  id:'d4', short:'出发去度假', day:'Day 4', title:'Going on Vacation', zh:'出发去度假', cover:'media/d4_cover.jpg', badge:'🚙', pickPic:true,
   pages:[
     {en:'We put the bags in the car.',     key:'bags', pic:'🎒👜',     zh:'我们把包放进车里。',   act:'假装拎起一个很重的大包，“嘿哟”一声放进车里', img:'media/d4_1.jpg', au:'media/d4_1.mp3'},
     {en:'We put the toys in the car.',     key:'toys', pic:'🚂🧩',     zh:'我们把玩具放进车里。', act:'双手抱起一堆玩具，放进车里', img:'media/d4_2.jpg', au:'media/d4_2.mp3'},
@@ -499,7 +523,7 @@ const LESSONS = [
   ]
 },
 {
-  id:'d5', day:'Day 5', title:'The Moon Is Round', zh:'月亮圆圆（儿歌）', cover:'media/d5_cover.jpg', badge:'🌕',
+  id:'d5', short:'月亮圆圆', day:'Day 5', title:'The Moon Is Round', zh:'月亮圆圆（儿歌）', cover:'media/d5_cover.jpg', badge:'🌕',
   pages:[
     {en:'The moon is round, round, round.', rep:2, key:'round', zh:'月亮圆圆圆。', act:'双手举过头顶，画一个大大的圆', img:'media/d5_1.jpg', au:'media/d5_1.mp3'},
     {en:'On my head, on my head. The moon is on my head.', key:'head', zh:'在我头上，在我头上，月亮就在我头上。', act:'双手拍拍自己的头', img:'media/d5_2.jpg', au:'media/d5_2.mp3'},
@@ -543,7 +567,7 @@ const LESSONS = [
   ]
 },
 {
-  id:'d6', day:'Day 6', title:'Hello, Mr. Moon', zh:'月亮公公你好', cover:'media/d6_1.jpg', badge:'🥮',
+  id:'d6', short:'月亮公公', day:'Day 6', title:'Hello, Mr. Moon', zh:'月亮公公你好', cover:'media/d6_1.jpg', badge:'🥮',
   pages:[
     {en:'Look at the moon!',     key:'moon',     zh:'快看呀！是月亮！',   act:'小手指着天上', img:'media/d6_1.jpg', au:'media/d6_1.mp3'},
     {en:'It’s big and round.',   key:'big|round',zh:'它又大又圆。',       act:'张开双臂比一个大大的圆', img:'media/d6_2.jpg', au:'media/d6_2.mp3'},
@@ -575,6 +599,41 @@ const ROUND_YES = [['🌕','moon','the moon'],['⚽','ball','a ball'],['🍪','c
 const ROUND_NO  = [['⭐','star','a star'],['📘','book','a book'],['🏠','house','a house'],['🍌','banana','a banana'],['📱','phone','a phone'],['🔺','triangle','a triangle']];
 const ZH_INTRO = {pick:'听英语，找到对的图片', pack:'听英语，把东西放进车里', round:'它是不是圆的？圆的点左边，不圆点右边', moon:'听英语，给月亮变魔法', bath:'听英语，点一点要洗的地方', shop:'你是宠物店老板，客人要什么，就点什么', bus:'听英语，开巴士'};
 const cap = t => t[0].toUpperCase() + t.slice(1);
+
+/* Lulu the moon friend: what she says, and how she looks */
+const COACH = {story:'看图听一听，跟我做动作！', words:'点一点卡片，听听怎么说！', game:'选一个游戏，我们来玩吧！', speak:'听一句，说一句，你最棒！'};
+const LULU_HI = '嗨，我是小月亮露露！我们一起学英语吧！';
+const LULU_DONE = '你太棒了！全部学完啦！';
+const luluGo = l => `今天我们去学「${l.short}」吧！`;
+const PRAISE = ['太棒啦！', '答对啦！', '你真厉害！', '就是这个！'];
+const CHEERUP = ['再听一次试试～', '没关系，再来！', '差一点点！'];
+function luluSVG(){
+  return `<svg viewBox="0 0 100 100" aria-hidden="true">
+    <circle cx="50" cy="52" r="40" fill="#FFC83D" stroke="#E9A800" stroke-width="2"/>
+    <circle cx="37" cy="36" r="10" fill="#FFE08A" opacity=".85"/><circle cx="64" cy="76" r="5" fill="#F2B632" opacity=".55"/><circle cx="74" cy="38" r="3.5" fill="#F2B632" opacity=".55"/>
+    <g class="en"><circle cx="36" cy="50" r="5" fill="#3A2A00"/><circle cx="64" cy="50" r="5" fill="#3A2A00"/><circle cx="38" cy="48" r="1.6" fill="#fff"/><circle cx="66" cy="48" r="1.6" fill="#fff"/></g>
+    <g class="eh"><path d="M30 52q6-8 12 0M58 52q6-8 12 0" stroke="#3A2A00" stroke-width="4" fill="none" stroke-linecap="round"/></g>
+    <path class="mn" d="M38 64q12 11 24 0" stroke="#7A4A00" stroke-width="4" fill="none" stroke-linecap="round"/>
+    <path class="mh" d="M35 62q15 20 30 0z" fill="#8A3414"/>
+    <ellipse class="mo" cx="50" cy="67" rx="5" ry="6" fill="#8A3414"/>
+    <circle cx="27" cy="62" r="6" fill="#FF9E7A" opacity=".7"/><circle cx="73" cy="62" r="6" fill="#FF9E7A" opacity=".7"/>
+    <path class="spk" d="M85 10l3 8 8 3-8 3-3 8-3-8-8-3 8-3z" fill="#fff"/>
+  </svg>`;
+}
+const luluBtn = (line) => `<button class="lulu" data-a="lulu" data-say="${esc(line)}" aria-label="小月亮露露">${luluSVG()}</button>`;
+let luluTimer = 0;
+function luluReact(kind, text){
+  document.querySelectorAll('.lulu').forEach(el => { el.classList.remove('yay', 'oops'); void el.offsetWidth; el.classList.add(kind); });
+  const bub = document.getElementById('coachBub');
+  if(bub && text){ if(!bub.dataset.base) bub.dataset.base = bub.innerHTML; bub.textContent = text; }
+  clearTimeout(luluTimer);
+  luluTimer = setTimeout(() => {
+    document.querySelectorAll('.lulu').forEach(el => el.classList.remove('yay', 'oops'));
+    const b = document.getElementById('coachBub');
+    if(b && b.dataset.base){ b.innerHTML = b.dataset.base; delete b.dataset.base; }
+  }, 1700);
+}
+const pickOne = a => a[Math.floor(Math.random() * a.length)];
 
 const STEPS = [
   {id:'story', ic:'📖', lb:'听故事'},
@@ -663,6 +722,7 @@ async function prefetchLesson(l){
 /* short sound effects, made in the browser */
 let actx = null;
 function sfx(kind){
+  luluReact(kind === 'no' ? 'oops' : 'yay', kind === 'ok' ? pickOne(PRAISE) : kind === 'no' ? pickOne(CHEERUP) : '');
   try{
     actx = actx || new (window.AudioContext || window.webkitAudioContext)();
     if(actx.state === 'suspended') actx.resume();
@@ -680,7 +740,7 @@ function sfx(kind){
 document.addEventListener('pointerdown', () => { try{ actx = actx || new (window.AudioContext || window.webkitAudioContext)(); actx.resume(); }catch(e){} }, {once:true});
 function allPhrases(){
   const en = new Set(['Yes!','Yes! Round, round, round!','Hmm, look again!','Hmm, listen again!','Great job!','Is it round?']);
-  const zh = new Set(Object.values(ZH_INTRO));
+  const zh = new Set([...Object.values(ZH_INTRO), ...Object.values(COACH), LULU_HI, LULU_DONE, ...LESSONS.map(luluGo)]);
   LESSONS.forEach(l => { l.words.forEach(w => en.add(w.w)); l.pages.forEach(p => { zh.add(p.zh); p.key.toLowerCase().split('|').forEach(k => en.add(k)); }); });
   LESSONS.find(l => l.id === 'd4').words.filter(w => w.w !== 'car').forEach(w => { en.add(`Put the ${w.w} in the car!`); });
   ROUND_YES.concat(ROUND_NO).forEach(([,,a]) => en.add(`Look! ${cap(a)}. Is it round?`));
@@ -735,7 +795,7 @@ function markDone(step){
   const tab = document.querySelector(`.steps [data-s="${step}"]`);
   if(tab && !tab.querySelector('.done')) tab.insertAdjacentHTML('beforeend', '<i class="star on done"></i>');
   const all = STEPS.every(s => isDone(lid, s.id));
-  cheer(all ? `整本学完啦！得到贴纸 ${L().badge}` : '得到一颗星！');
+  if(all) cheer('露露送你一张贴纸！', L().badge); else cheer('得到一颗星！');
   return true;
 }
 function confetti(n = 36){
@@ -752,13 +812,13 @@ function confetti(n = 36){
     setTimeout(() => c.remove(), 2600);
   }
 }
-function cheer(text){
+function cheer(text, gift){
   const el = document.createElement('div');
   el.className = 'cheer';
-  el.innerHTML = `<div class="card"><div class="bigstar"></div><b>${esc(text)}</b></div>`;
+  el.innerHTML = `<div class="card"><div class="lulu yay">${luluSVG()}</div>${gift ? `<span class="gift">${gift}</span>` : '<div class="bigstar"></div>'}<b>${esc(text)}</b></div>`;
   document.body.appendChild(el);
   confetti();
-  setTimeout(() => el.remove(), 2200);
+  setTimeout(() => el.remove(), gift ? 3000 : 2200);
 }
 
 /* ============ helpers ============ */
@@ -800,21 +860,24 @@ function render(){
 
 function renderHome(){
   const task = nextTask(), rev = reviewPick(task);
+  const started = LESSONS.some(l => STEPS.some(s => isDone(l.id, s.id)));
+  const hiLine = !task ? LULU_DONE : started ? luluGo(task.l) : LULU_HI;
+  const hiHtml = !task ? esc(LULU_DONE) : started ? `今天我们去学「<b>${esc(task.l.short)}</b>」吧！` : `嗨，我是<b>小月亮露露</b>！我们一起学英语吧！`;
   app.innerHTML = `
   <header class="home-head">
-    <div class="brand"><div class="brand-moon" aria-hidden="true"></div>
-      <div><h1>英语跟读乐园</h1><p>每天一本小书，先听懂，再开口</p></div></div>
+    <div class="brand"><div><h1>英语跟读乐园</h1><p>每天一本小书，先听懂，再开口</p></div></div>
   </header>
+  <div class="coach home">${luluBtn(hiLine)}<span class="bub">${hiHtml}</span></div>
   ${task ? `<button class="go" data-a="open" data-id="${task.l.id}" data-s="${task.s.id}">
       <img src="${task.l.cover}" alt="">
       <span><small>接着学</small><b>${task.l.day} · ${esc(task.l.title)}</b><span class="next">下一步：${task.s.ic} ${task.s.lb}</span></span>
-      <span class="toy yellow big">开始 ▶</span>
+      <span class="toy big">出发！</span>
     </button>` : `<div class="go finished">全部学完啦！等老师发新课 🎉</div>`}
   ${rev ? `<button class="review" data-a="open" data-id="${rev.id}" data-s="game">
       <span class="ic">🔁</span><span><b>今天复习一下</b><small>${rev.day} · ${esc(rev.title)} · 玩一局「${rev.games[0].name}」</small></span>
     </button>` : ''}
-  <h2 class="sec">我的贴纸</h2>
-  <div class="stks">${LESSONS.map(l => STEPS.every(s => isDone(l.id, s.id)) ? `<span class="stk on" title="${l.day}">${l.badge}</span>` : `<span class="stk" title="${l.day}">?</span>`).join('')}</div>
+  <section class="stickerbook"><h2>我的贴纸本</h2>
+  <div class="stks">${LESSONS.map(l => STEPS.every(s => isDone(l.id, s.id)) ? `<span class="stk on" title="${l.day}">${l.badge}</span>` : `<span class="stk" title="${l.day}">?</span>`).join('')}</div></section>
   <h2 class="sec">全部课程</h2>
   <div class="books">
     ${LESSONS.map(l => `
@@ -905,6 +968,7 @@ function renderLesson(){
   <nav class="steps">
     ${STEPS.map(s => `<button data-a="step" data-s="${s.id}" class="${S.step===s.id?'on':''}"><span class="ic">${s.ic}</span><span class="lb">${s.lb}</span>${isDone(l.id,s.id)?'<i class="star on done"></i>':''}</button>`).join('')}
   </nav>
+  <div class="coach">${luluBtn(COACH[S.step])}<span class="bub" id="coachBub">${COACH[S.step]}</span></div>
   <main class="stage" id="stage"></main>`;
   renderStage();
 }
@@ -1323,7 +1387,7 @@ function addBubbles(part){
   [[0,0,9],[-12,6,6],[11,-7,7],[8,9,5],[-9,-9,5]].forEach(([dx,dy,r]) => {
     const c = document.createElementNS(ns, 'circle');
     c.setAttribute('cx', x+dx); c.setAttribute('cy', y+dy); c.setAttribute('r', r);
-    c.setAttribute('class', 'bub'); c.setAttribute('pointer-events', 'none');
+    c.setAttribute('class', 'suds'); c.setAttribute('pointer-events', 'none');
     svg.appendChild(c);
     if(part === 'shoulders' || part === 'hands' || part === 'knees' || part === 'feet'){
       const m = c.cloneNode(); m.setAttribute('cx', 200 - (x+dx)); svg.appendChild(m);
@@ -1619,7 +1683,7 @@ async function karaokePlay(){
 
 /* ============ updates ============ */
 /* the site is cached for a while; check a tiny version file and reload on the home screen when a new version is out */
-const APP_VERSION = '20260926200757';
+const APP_VERSION = '20260926202408';
 let updateReady = null;
 function checkUpdate(){
   if(APP_VERSION.startsWith('__')) return;
@@ -1648,8 +1712,12 @@ const actions = {
     document.querySelectorAll('.speed button').forEach(x => x.classList.toggle('on', x === b));
     if(!player.paused && !curSrc.startsWith('blob:')) player.playbackRate = S.speed; },
   step(b){ stopAll(); S.step=b.dataset.s; if(S.step!=='game') S.game=null; S.kara=null; if(S.sp) S.sp.phase='idle';
-    document.querySelectorAll('.steps button').forEach(x => x.classList.toggle('on', x.dataset.s === S.step)); renderStage();
+    document.querySelectorAll('.steps button').forEach(x => x.classList.toggle('on', x.dataset.s === S.step));
+    const cb = document.getElementById('coachBub'); if(cb){ cb.textContent = COACH[S.step]; delete cb.dataset.base; }
+    const cl = document.querySelector('.coach .lulu'); if(cl) cl.dataset.say = COACH[S.step];
+    renderStage();
     if(b.classList.contains('cta')) document.querySelector('.steps').scrollIntoView({block:'start', behavior:'smooth'}); },
+  lulu(b){ luluReact('yay'); say(b.dataset.say, 'zh-CN'); },
   sayword(b){ stopAll(); say(b.dataset.w.toLowerCase()); },
   'rec-toggle'(){ S.recOn = !S.recOn; store.set('recOn', S.recOn); renderStage(); },
   replay(){ stopAll(); playPage(); },

@@ -2,3 +2,5 @@
 .DS_Store
 app.html
 build.py
+_style.html
+fonts/src/
