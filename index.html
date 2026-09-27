@@ -509,6 +509,7 @@ const LESSONS = [
     {id:'shop',icon:'🏪',name:'开宠物店',desc:'你当店主。客人要什么小动物，就把它递给客人。'},
     {id:'pick',icon:'👂',name:'听音找图',desc:'听一句话，从三张图里点出对的那张。'}
   ],
+  song:{read:true, src:'media/d2_full.mp3', lines:[[0.6,4.3,0],[4.5,7.5,1],[7.6,10.4,2],[10.5,13.6,3],[13.7,16.7,4],[16.75,19.7,5],[19.75,22.6,6],[22.6,26.0,7]]},
   life:[
     '拿玩具小动物玩“开宠物店”：孩子递给你时说 “Here is a puppy!” Here is 就是“给你、这儿有”。',
     '递东西的时候都可以用：“Here is a cup.” “Here is a book.”',
@@ -563,6 +564,7 @@ const LESSONS = [
     {id:'pack',icon:'🚙',name:'帮忙装车',desc:'听英语指令，把对的东西放进车里。'},
     {id:'pick',icon:'👂',name:'听音找图',desc:'听一句话，从三张图里点出对的那张。'}
   ],
+  song:{read:true, src:'media/d4_full.mp3', lines:[[0.3,5.5,0],[5.6,10.6,1],[10.65,15.45,2],[15.5,20.6,3],[20.65,25.75,4],[25.8,30.85,5],[30.9,36.0,6],[36.1,38.1,7]]},
   life:[
     '出门前让孩子帮忙装东西，每放一样就一起说：“We put the bags in the car.”',
     '玩具车过家家：把小熊、积木放进玩具车，大人说 “Put the bears in the car!” 让孩子照做。',
@@ -634,6 +636,7 @@ const LESSONS = [
     {id:'moon',icon:'🌝',name:'魔法月亮',desc:'听英语指令，把月亮变黄、变亮、变大。'},
     {id:'pick',icon:'👂',name:'听音找图',desc:'听一句话，从三张图里点出对的那张。'}
   ],
+  song:{read:true, src:'media/d6_full.mp3', lines:[[0,2.3,0],[3.4,5.9,1],[6.4,9.4,2],[9.9,12.9,3],[13.3,16.3,4],[16.35,19.2,5],[19.5,22.6,6],[23.3,26.4,7]]},
   life:[
     '中秋刚过，这几天晚上月亮还很圆。带孩子出门看月亮，说 “Look at the moon! Hello, Mr. Moon!”',
     '吃月饼、吃水果时说 “It’s sweet and yummy.”',
@@ -660,6 +663,7 @@ const LESSONS = [
     {id:'flag',icon:'🚩',name:'做一面国旗',desc:'听英语，把旗子变红，放上大星星和小星星，再升上天空。'},
     {id:'pick',icon:'👂',name:'听音找图',desc:'听一句话，从三张图里点出对的那张。'}
   ],
+  song:{read:true, src:'media/d7_full.mp3', lines:[[0,2.3,0],[2.7,5.3,1],[5.5,8.8,2],[9.0,12.7,3],[12.9,16.0,4],[16.2,18.93,5]]},
   life:[
     '国庆节（10 月 1 日）快到了，出门看到国旗就说：“Look! This is the flag of China.”',
     '和孩子一起数国旗上的星星：“One big star and four small ones. One, two, three, four!”',
@@ -1890,7 +1894,7 @@ function stageSpeak(st){
       <p class="note">说出关键词就可以给星星，不用每个词都说对。</p>`;
   }
   st.innerHTML = `
-  ${l.song ? `<div class="row" style="justify-content:flex-start;margin-bottom:14px"><button class="toy yellow" data-a="karaoke">🎵 跟着唱整首歌</button></div>` : ''}
+  ${l.song ? `<div class="row" style="justify-content:flex-start;margin-bottom:14px"><button class="toy yellow" data-a="karaoke">${l.song.read ? '📖 跟着读整篇' : '🎵 跟着唱整首歌'}</button></div>` : ''}
   <div class="story">
     <figure class="pic ${sp.phase==='listen'?'playing':''}"><img src="${p.img}" alt=""></figure>
     <div>
@@ -1956,7 +1960,7 @@ function karaokeRender(st){
   st.innerHTML = `
   <div class="ghead">
     <button class="toy round" data-a="k-back" aria-label="返回">←</button>
-    <div class="prompt"><b>跟着唱：${esc(l.title)}</b><small>跟着高亮的那一行唱，一起做动作</small></div>
+    <div class="prompt"><b>${l.song.read ? '跟着读' : '跟着唱'}：${esc(l.title)}</b><small>跟着高亮的那一行${l.song.read ? '读' : '唱'}，一起做动作</small></div>
     <button class="toy yellow" data-a="k-play">${k.playing?'⏸ 暂停':'▶ 播放'}</button>
   </div>
   <div class="karaoke">
@@ -1995,7 +1999,7 @@ async function karaokePlay(){
 
 /* ============ updates ============ */
 /* the site is cached for a while; check a tiny version file and reload on the home screen when a new version is out */
-const APP_VERSION = '20260927103413';
+const APP_VERSION = '20260927120949';
 let updateReady = null;
 function checkUpdate(){
   if(APP_VERSION.startsWith('__')) return;
