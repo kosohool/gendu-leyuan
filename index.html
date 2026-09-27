@@ -311,6 +311,20 @@ h1,h2,h3{font-family:var(--f-fun);font-weight:400;font-synthesis:none;text-wrap:
 .pet .pic2 img{width:100%;height:100%;object-fit:contain}
 .pet.wrong{animation:shake .45s}
 .pet-fly img{width:100%;height:auto}
+.pair{display:flex;align-items:flex-end;gap:6px;line-height:1}
+.sw{display:inline-block;width:62px;height:44px;border-radius:10px;box-shadow:inset 0 0 0 2px rgba(0,0,0,.08)}
+.word .pic2 img[src$=".svg"]{border-radius:8px}
+/* flag */
+.flagsky{position:relative;border-radius:22px;overflow:hidden;background:linear-gradient(#9FD4FF,#E4F5FF)}
+.flagsky svg{display:block;width:100%;height:auto;max-height:46vh}
+.flagsky .fl{transition:transform 2.2s cubic-bezier(.4,0,.2,1)}
+.flagsky .cloth{fill:#E9EDF3;transition:fill .8s}
+.flagsky.red .cloth{fill:#DE2910}
+.flagsky .st{opacity:0;transform-box:fill-box;transform-origin:center;transform:scale(.2);transition:opacity .4s,transform .5s cubic-bezier(.3,1.6,.5,1)}
+.flagsky .st.on{opacity:1;transform:scale(1)}
+.fbtns{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;margin-top:16px}
+.fbtns .sw{width:44px;height:32px}
+@media (max-width:720px){ .fbtns{grid-template-columns:repeat(3,1fr)} }
 /* bus */
 .street{position:relative;height:230px;border-radius:22px;overflow:hidden;background:linear-gradient(#CFE8F7 0 72%,#9AA3AF 72% 76%,#B9BCC4 76%)}
 .bus{position:absolute;left:50%;bottom:14px;width:min(92%,420px);transform:translateX(-50%);transition:transform 2s ease-in}
@@ -592,12 +606,38 @@ const LESSONS = [
     '吃月饼、吃水果时说 “It’s sweet and yummy.”',
     '问孩子：“Is it big? Is it yellow?” 他点头或摇头也算回答。'
   ]
+},
+{
+  id:'d7', short:'五星红旗', day:'Day 7', title:'The Five-Star Red Flag', zh:'五星红旗', cover:'media/d7_1.svg', badge:'⭐',
+  pages:[
+    {en:'The Five-Star Red Flag.',            key:'flag',            zh:'五星红旗。',                 act:'双手举起来，假装挥一挥旗子',     img:'media/d7_1.svg', au:'media/d7_1.mp3', noPick:true},
+    {en:'This is the flag of China.',         key:'China',           zh:'这是中国的国旗。',           act:'用小手指着国旗',                 img:'media/d7_2.svg', au:'media/d7_2.mp3'},
+    {en:'It is red with five yellow stars.',  key:'red|yellow|stars',zh:'它是红色的，有五颗黄色的星星。', act:'伸出五根手指，数一数',       img:'media/d7_3.svg', au:'media/d7_3.mp3'},
+    {en:'One big star and four small ones.',  key:'big|small',       zh:'一颗大星星和四颗小星星。',   act:'先张开双臂比大星星，再伸出四根手指', img:'media/d7_4.svg', au:'media/d7_4.mp3'},
+    {en:'The flag flies high in the sky.',    key:'high|sky',        zh:'国旗在空中高高飘扬。',       act:'手臂举得高高的，抬头往上看',     img:'media/d7_5.svg', au:'media/d7_5.mp3'},
+    {en:'I love our flag very much.',         key:'love',            zh:'我非常热爱我们的国旗。',     act:'双手在胸前比一个爱心',           img:'media/d7_6.svg', au:'media/d7_6.mp3'}
+  ],
+  words:[
+    {w:'flag',zh:'旗子',pic:'<img src="media/d7_flag.svg" alt="">'},{w:'China',zh:'中国',pic:'<img src="media/d7_1.svg" alt="">'},
+    {w:'red',zh:'红色',pic:'<span class="sw" style="background:#DE2910"></span>'},{w:'yellow',zh:'黄色',pic:'<span class="sw" style="background:#FFDE00"></span>'},
+    {w:'star',zh:'星星',pic:'⭐'},{w:'big',zh:'大的',pic:'<span class="pair"><span class="tiny" style="opacity:.35">⭐</span><span style="font-size:3.4rem">⭐</span></span>',a:'张开双臂'},{w:'small',zh:'小的',pic:'<span class="pair"><span style="font-size:3rem;opacity:.3">⭐</span><span class="tiny" style="opacity:1">⭐</span></span>',a:'手指捏一捏'},
+    {w:'high',zh:'高高的',pic:'⬆️',a:'手举高高'},{w:'sky',zh:'天空',pic:'☁️'},{w:'love',zh:'爱',pic:'❤️',a:'比个爱心'}
+  ],
+  games:[
+    {id:'flag',icon:'🚩',name:'做一面国旗',desc:'听英语，把旗子变红，放上大星星和小星星，再升上天空。'},
+    {id:'pick',icon:'👂',name:'听音找图',desc:'听一句话，从三张图里点出对的那张。'}
+  ],
+  life:[
+    '国庆节（10 月 1 日）快到了，出门看到国旗就说：“Look! This is the flag of China.”',
+    '和孩子一起数国旗上的星星：“One big star and four small ones. One, two, three, four!”',
+    '画一面国旗：边画边说 red、yellow、big star、small stars。'
+  ]
 }
 ];
 
 const ROUND_YES = [['🌕','moon','the moon'],['⚽','ball','a ball'],['🍪','cookie','a cookie'],['🍊','orange','an orange'],['🍩','donut','a donut'],['🥮','mooncake','a mooncake']];
 const ROUND_NO  = [['⭐','star','a star'],['📘','book','a book'],['🏠','house','a house'],['🍌','banana','a banana'],['📱','phone','a phone'],['🔺','triangle','a triangle']];
-const ZH_INTRO = {pick:'听英语，找到对的图片', pack:'听英语，把东西放进车里', round:'它是不是圆的？圆的点左边，不圆点右边', moon:'听英语，给月亮变魔法', bath:'听英语，点一点要洗的地方', shop:'你是宠物店老板，客人要什么，就点什么', bus:'听英语，开巴士'};
+const ZH_INTRO = {pick:'听英语，找到对的图片', pack:'听英语，把东西放进车里', round:'它是不是圆的？圆的点左边，不圆点右边', moon:'听英语，给月亮变魔法', bath:'听英语，点一点要洗的地方', shop:'你是宠物店老板，客人要什么，就点什么', bus:'听英语，开巴士', flag:'听英语，我们一起做一面国旗'};
 const cap = t => t[0].toUpperCase() + t.slice(1);
 
 /* Lulu the moon friend: what she says, and how she looks */
@@ -745,7 +785,7 @@ function allPhrases(){
   LESSONS.find(l => l.id === 'd4').words.filter(w => w.w !== 'car').forEach(w => { en.add(`Put the ${w.w} in the car!`); });
   ROUND_YES.concat(ROUND_NO).forEach(([,,a]) => en.add(`Look! ${cap(a)}. Is it round?`));
   ROUND_NO.forEach(([,n]) => en.add(`Yes! The ${n} is not round.`));
-  ['Thank you!','Open!','Shut!', ...Object.values(BUS_CMDS)].forEach(t => en.add(t));
+  ['Thank you!','Open!','Shut!','Red!', ...Object.values(BUS_CMDS), ...FLAG_STEPS.map(s => s.cmd), ...COUNT_WORDS].forEach(t => en.add(t));
   LESSONS.find(l => l.id === 'd2').words.forEach(w => en.add(`A ${w.w}, please!`));
   MOON_STEPS.forEach(s => { en.add(s.cmd); s.after.forEach(([k,arg]) => { if(k === 'say') en.add(arg); }); });
   return {en:[...en], zh:[...zh]};
@@ -1079,14 +1119,15 @@ function stageGame(st){
       <button class="gcard" data-a="game" data-g="${g.id}"><span class="big">${g.icon}</span><h3>${g.name}</h3><p>${g.desc}</p></button>`).join('')}</div>`;
     return;
   }
-  ({pick:gPickRender, pack:gPackRender, round:gRoundRender, moon:gMoonRender, bath:gBathRender, shop:gShopRender, bus:gBusRender})[g.type](st);
+  ({pick:gPickRender, pack:gPackRender, round:gRoundRender, moon:gMoonRender, bath:gBathRender, shop:gShopRender, bus:gBusRender, flag:gFlagRender})[g.type](st);
 }
 const INTRO_DONE = new Set();
 function startGame(type){
   stopAll();
   const l = L();
   if(type === 'pick'){
-    const order = shuffle(l.pages.map((_,i)=>i)).slice(0, Math.min(6, l.pages.length));
+    const pool = l.pages.map((_,i)=>i).filter(i => !l.pages[i].noPick);
+    const order = shuffle(pool).slice(0, Math.min(6, pool.length));
     S.game = {type, order, i:0, score:0, miss:false};
   } else if(type === 'pack'){
     const items = l.words.filter(w => w.w !== 'car');
@@ -1103,6 +1144,8 @@ function startGame(type){
     S.game = {type, order: shuffle(l.words.map((_,i)=>i)).slice(0,6), i:0, score:0, miss:false};
   } else if(type === 'bus'){
     S.game = {type, i:0, door:false};
+  } else if(type === 'flag'){
+    S.game = {type, i:0, red:false, big:false, small:0, high:false};
   }
   S.game.intro = !INTRO_DONE.has(type);
   INTRO_DONE.add(type);
@@ -1127,11 +1170,11 @@ function gameResult(st, emoji, title, sub){
 function gPickRender(st){
   const g = S.game, l = L();
   if(g.i >= g.order.length){
-    gameResult(st, '👂', `找对了 ${g.score} / ${g.order.length}`, g.score === g.order.length ? '全都听懂了！' : '有几句还不熟，回“听故事”再听听，明天再玩一次。');
+    gameResult(st, '👂', `找对了 ${Math.min(g.score, g.order.length)} / ${g.order.length}`, g.score === g.order.length ? '全都听懂了！' : '有几句还不熟，回“听故事”再听听，明天再玩一次。');
     return;
   }
   const t = g.order[g.i];
-  const others = shuffle(l.pages.map((_,i)=>i).filter(i => i !== t)).slice(0,2);
+  const others = shuffle(l.pages.map((_,i)=>i).filter(i => i !== t && !l.pages[i].noPick)).slice(0,2);
   g.opts = shuffle([t, ...others]); g.miss = false;
   st.innerHTML = gameHead('听一听，是哪张图？', `第 ${g.i+1} 题，共 ${g.order.length} 题`, `<span class="score">⭐ ${g.score}</span>`) +
     `<div class="opts">${g.opts.map(i => `<button class="opt" data-a="gpick" data-i="${i}">${l.pickPic ? `<span class="bigpic">${l.pages[i].pic}</span>` : `<img src="${l.pages[i].img}" alt="">`}</button>`).join('')}</div>`;
@@ -1147,7 +1190,8 @@ async function gPick(i, el){
   if(g.busy || el.classList.contains('wrong')) return;
   const id = runId, t = g.order[g.i];
   if(i === t){
-    g.busy = true;
+    if(g.done === g.i) return;   /* each question counts once, however fast the taps come */
+    g.done = g.i; g.busy = true;
     el.classList.add('right'); sfx('ok');
     if(!g.miss) g.score++;
     await wait(300);
@@ -1250,7 +1294,8 @@ async function gRound(v, el){
   if(g.busy || !g.items[g.i]) return;
   const [, name, isRound] = g.items[g.i];
   if((v === '1') === isRound){
-    g.busy = true;
+    if(g.done === g.i) return;
+    g.done = g.i; g.busy = true;
     el.classList.add('right'); sfx('ok');
     if(!g.miss) g.score++;
     await say(isRound ? 'Yes! Round, round, round!' : `Yes! The ${name} is not round.`);
@@ -1406,7 +1451,8 @@ async function gBath(part, el){
   if(!p || g.busy) return;
   const id = runId;
   if(part === p.part){
-    g.busy = true;
+    if(g.done === g.i) return;
+    g.done = g.i; g.busy = true;
     if(!g.miss) g.score++;
     g.clean.push(part); addBubbles(part); sfx('ok');
     await playClip(p.a);
@@ -1453,7 +1499,8 @@ async function gShop(i, el){
   if(g.busy || g.i >= g.order.length) return;
   const id = runId, want = g.order[g.i];
   if(i === want){
-    g.busy = true;
+    if(g.done === g.i) return;
+    g.done = g.i; g.busy = true;
     if(!g.miss) g.score++;
     sfx('ok');
     const a = el.getBoundingClientRect(), b = document.getElementById('basket').getBoundingClientRect();
@@ -1541,6 +1588,86 @@ async function gBus(b, el){
   await wait(600);
   if(!alive(id)) return;
   gameResult(document.getElementById('stage'), '🚌💨', '巴士开走啦！', '下次坐公交车，跟孩子一起说 “The door goes open and shut.”');
+}
+
+/* flag: colour it, add the stars, raise it */
+const FLAG_STEPS = [
+  {cmd:'Make it red!', b:'red'},
+  {cmd:'One big star!', b:'big'},
+  {cmd:'Four small stars!', b:'small', times:4},
+  {cmd:'Fly the flag high in the sky!', b:'high'}
+];
+const COUNT_WORDS = ['One!', 'Two!', 'Three!', 'Four!'];
+function flagScene(g){
+  const sp = (cx, cy, R, to) => {
+    const a0 = to ? Math.atan2(to[1]-cy, to[0]-cx) : -Math.PI/2, r = R * 0.382;
+    return Array.from({length:10}, (_, k) => { const a = a0 + k*Math.PI/5, rr = k % 2 ? r : R; return `${(cx+rr*Math.cos(a)).toFixed(1)},${(cy+rr*Math.sin(a)).toFixed(1)}`; }).join(' ');
+  };
+  const u = 5, big = [5*u, 5*u];
+  const smalls = [[10,2],[12,4],[12,7],[10,9]].map(([x, y], i) => `<polygon class="st sm ${i < g.small ? 'on' : ''}" points="${sp(x*u, y*u, u, big)}" fill="#FFDE00"/>`).join('');
+  return `<div class="flagsky ${g.red ? 'red' : ''}" id="flagsky"><svg viewBox="0 0 360 250" aria-hidden="true">
+    <ellipse cx="180" cy="290" rx="260" ry="70" fill="#8FD17A"/>
+    <rect x="96" y="14" width="8" height="226" rx="4" fill="#B9C2CF"/><circle cx="100" cy="14" r="8" fill="#FFC83D"/>
+    <g class="fl" id="fl" style="transform:translate(104px, ${g.high ? 22 : 128}px)">
+      <rect class="cloth" width="150" height="100"/>
+      <polygon class="st big ${g.big ? 'on' : ''}" points="${sp(big[0], big[1], 3*u)}" fill="#FFDE00"/>
+      ${smalls}
+    </g></svg></div>`;
+}
+function gFlagRender(st){
+  const g = S.game, s = FLAG_STEPS[g.i];
+  st.innerHTML = gameHead(s ? esc(s.cmd) : 'I love our flag very much.', s ? `第 ${g.i+1} 步，共 ${FLAG_STEPS.length} 步${s.times ? ` · 已经放了 ${g.small} 颗` : ''}` : '国旗做好啦！',
+      `<span class="score">${g.i} / ${FLAG_STEPS.length}</span>`) + flagScene(g) +
+    `<div class="fbtns">
+       <button class="mbtn" data-a="gflag" data-b="red"><span class="sw" style="background:#DE2910"></span><small>red</small></button>
+       <button class="mbtn" data-a="gflag" data-b="blue"><span class="sw" style="background:#3D7DD8"></span><small>blue</small></button>
+       <button class="mbtn" data-a="gflag" data-b="green"><span class="sw" style="background:#27A36D"></span><small>green</small></button>
+       <button class="mbtn" data-a="gflag" data-b="big"><span style="font-size:2.6rem">⭐</span><small>big star</small></button>
+       <button class="mbtn" data-a="gflag" data-b="small"><span style="font-size:1.2rem">⭐</span><small>small star</small></button>
+       <button class="mbtn" data-a="gflag" data-b="high">⬆️<small>high</small></button>
+     </div>`;
+  if(s) gFlagSay();
+}
+async function gFlagSay(){
+  const g = S.game, id = runId;
+  if(g.intro){ g.intro = false; await say(ZH_INTRO.flag, 'zh-CN'); if(!alive(id)) return; await playClip('media/d7_1.mp3'); if(!alive(id)) return; await wait(200); }
+  const s = FLAG_STEPS[g.i]; if(s) say(s.cmd);
+}
+async function gFlag(b, el){
+  const g = S.game, s = FLAG_STEPS[g.i];
+  if(!s || g.busy) return;
+  const id = runId;
+  if(b !== s.b){
+    el.classList.remove('wrong'); void el.offsetWidth; el.classList.add('wrong'); sfx('no');
+    await say('Hmm, listen again!'); if(alive(id)) say(s.cmd);
+    return;
+  }
+  g.busy = true; sfx('ok');
+  if(b === 'red'){ g.red = true; document.getElementById('flagsky').classList.add('red'); await say('Red!'); }
+  else if(b === 'big'){ g.big = true; document.querySelector('#flagsky .big').classList.add('on'); await say('One big star!'); }
+  else if(b === 'small'){
+    const star = document.querySelectorAll('#flagsky .sm')[g.small];
+    if(star) star.classList.add('on');
+    await say(COUNT_WORDS[g.small]);
+    g.small++;
+    if(g.small < s.times){
+      g.busy = false;
+      const sub = document.querySelector('.ghead .prompt small'); if(sub) sub.textContent = `第 ${g.i+1} 步，共 ${FLAG_STEPS.length} 步 · 已经放了 ${g.small} 颗`;
+      return;
+    }
+    if(alive(id)) await playClip('media/d7_4.mp3');
+  }
+  else if(b === 'high'){ g.high = true; document.getElementById('fl').style.transform = 'translate(104px, 22px)'; await playClip('media/d7_5.mp3'); }
+  g.busy = false;
+  if(!alive(id)) return;
+  g.i++;
+  gFlagRender(document.getElementById('stage'));
+  if(g.i < FLAG_STEPS.length) return;
+  confetti(28);
+  await playClip('media/d7_2.mp3'); if(!alive(id)) return;
+  await playClip('media/d7_6.mp3'); await wait(600);
+  if(!alive(id)) return;
+  gameResult(document.getElementById('stage'), '⭐', '国旗做好啦！', '国庆节出门看到国旗，和孩子一起说 “This is the flag of China.”');
 }
 
 /* ---------- step 4: speak ---------- */
@@ -1683,7 +1810,7 @@ async function karaokePlay(){
 
 /* ============ updates ============ */
 /* the site is cached for a while; check a tiny version file and reload on the home screen when a new version is out */
-const APP_VERSION = '20260926202408';
+const APP_VERSION = '20260927101749';
 let updateReady = null;
 function checkUpdate(){
   if(APP_VERSION.startsWith('__')) return;
@@ -1736,7 +1863,8 @@ const actions = {
     else if(g.type==='moon' && MOON_STEPS[g.i]) say(MOON_STEPS[g.i].cmd);
     else if(g.type==='bath' && L().pages[g.order[g.i]]) playClip(L().pages[g.order[g.i]].q);
     else if(g.type==='shop' && g.order[g.i] !== undefined) say(`A ${L().words[g.order[g.i]].w}, please!`);
-    else if(g.type==='bus' && BUS_SEQ[g.i]) say(BUS_CMDS[BUS_SEQ[g.i]]); },
+    else if(g.type==='bus' && BUS_SEQ[g.i]) say(BUS_CMDS[BUS_SEQ[g.i]]);
+    else if(g.type==='flag' && FLAG_STEPS[g.i]) say(FLAG_STEPS[g.i].cmd); },
   gpick(b){ gPick(+b.dataset.i, b); },
   gpack(b){ gPack(+b.dataset.i, b); },
   ground(b){ gRound(b.dataset.v, b); },
@@ -1744,6 +1872,7 @@ const actions = {
   gbath(b){ gBath(b.dataset.p, b); },
   gshop(b){ gShop(+b.dataset.i, b); },
   gbus(b){ gBus(b.dataset.b, b); },
+  gflag(b){ gFlag(b.dataset.b, b); },
   'sp-go'(){ spGo(); },
   'sp-again'(){ spGo(); },
   'sp-good'(){ spGood(); },
