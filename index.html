@@ -325,6 +325,39 @@ h1,h2,h3{font-family:var(--f-fun);font-weight:400;font-synthesis:none;text-wrap:
 .fbtns{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;margin-top:16px}
 .fbtns .sw{width:44px;height:32px}
 @media (max-width:720px){ .fbtns{grid-template-columns:repeat(3,1fr)} }
+.steps button.locked{opacity:.55}
+.steps button .lock{position:absolute;top:5px;left:8px;font-size:.85rem}
+/* arcade */
+.arcade-card{display:flex;align-items:center;gap:14px;margin-top:14px;width:100%;text-align:left;background:linear-gradient(135deg,#FFE9A8,#FFD3DF);border-radius:22px;padding:14px 16px;box-shadow:0 5px 0 #E6B3C1}
+.arcade-card:active{transform:translateY(4px);box-shadow:0 1px 0 #E6B3C1}
+.arcade-card .ic{font-size:2.6rem;line-height:1}
+.arcade-card b{display:block;font-family:var(--f-fun);font-weight:400;font-synthesis:none;font-size:1.4rem;color:#8A2E4A}
+.arcade-card small{color:#7A4A5A}
+.arcade-card.locked{background:var(--surface);box-shadow:0 5px 0 var(--line)}
+.arcade-card.locked b{color:var(--ink-soft)}
+.pond{position:relative;height:440px;border-radius:22px;overflow:hidden;background:linear-gradient(#BFE6FF,#E4F5FF)}
+.bubl{position:absolute;bottom:-130px;width:108px;height:108px;margin-left:-54px;border-radius:50%;display:grid;place-items:center;padding:0;
+  background:radial-gradient(circle at 30% 26%,rgba(255,255,255,.98),rgba(255,255,255,.6) 38%,rgba(170,215,255,.38) 72%);border:3px solid rgba(255,255,255,.95);
+  box-shadow:inset -6px -8px 16px rgba(61,125,216,.2),0 4px 10px rgba(61,125,216,.12);animation:float-up var(--dur,9s) linear infinite;animation-delay:var(--delay,0s)}
+.bubl .pic2{display:grid;place-items:center;width:74px;height:66px;font-size:2.7rem;line-height:1;overflow:hidden}
+.bubl .pic2 img{max-width:74px;max-height:62px;object-fit:contain;mix-blend-mode:multiply;border-radius:10px}
+.bubl .pic2 svg,.bubl .fig svg{width:74px;height:56px}
+.bubl .pic2 .pair{transform:scale(.8)}
+.bubl.nope{border-color:#FF9E8A}
+@keyframes float-up{from{transform:translateY(0)}to{transform:translateY(-600px)}}
+@media (max-width:540px){ .bubl{width:90px;height:90px;margin-left:-45px} .bubl .pic2{width:62px;height:56px;font-size:2.2rem} .bubl .pic2 img{max-width:62px;max-height:52px} .bubl .pic2 svg,.bubl .fig svg{width:62px;height:48px} }
+.mem{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.mcard{position:relative;aspect-ratio:4/5;padding:0;border-radius:16px;perspective:600px}
+.mcard .in{position:absolute;inset:0;transition:transform .45s;transform-style:preserve-3d}
+.mcard.up .in{transform:rotateY(180deg)}
+.mcard .bk,.mcard .fc{position:absolute;inset:0;border-radius:16px;backface-visibility:hidden;-webkit-backface-visibility:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px}
+.mcard .bk{background:var(--sky);box-shadow:0 4px 0 var(--sky-deep);color:#FFE08A;font-size:2rem}
+.mcard .fc{transform:rotateY(180deg);background:#fff;box-shadow:0 4px 0 var(--line)}
+.mcard .fc .pic2{display:grid;place-items:center;height:62%;font-size:2.4rem;line-height:1}
+.mcard .fc .pic2 img{max-height:100%;max-width:90%;object-fit:contain}
+.mcard .fc .pic2 svg,.mcard .fc .fig svg{width:64px;height:50px}
+.mcard .fc .w{font-family:var(--f-read);font-weight:700;font-size:1rem}
+.mcard.matched .fc{box-shadow:0 0 0 4px var(--grass),0 4px 0 var(--line)}
 /* bus */
 .street{position:relative;height:230px;border-radius:22px;overflow:hidden;background:linear-gradient(#CFE8F7 0 72%,#9AA3AF 72% 76%,#B9BCC4 76%)}
 .bus{position:absolute;left:50%;bottom:14px;width:min(92%,420px);transform:translateX(-50%);transition:transform 2s ease-in}
@@ -675,6 +708,25 @@ function luluReact(kind, text){
 }
 const pickOne = a => a[Math.floor(Math.random() * a.length)];
 
+/* games arcade: only concrete things, from lessons already learned */
+const ARC_SKIP = new Set(['round','big','bright','yellow','far','sweet','yummy','round and round','open','shut','wash','smiling','rolling','red','small','high','love','China','sky','head','ball','dogs']);
+/* pictures that look alike never share a round */
+const ARC_GROUPS = [['feet','toes','knees'], ['face','nose','hair'], ['shoulders','hands']];
+const clash = (a, b) => ARC_GROUPS.some(g => g.includes(a.w) && g.includes(b.w));
+function pickApart(list, n, avoid){ const out = []; for(const w of list){ if(out.length >= n) break; if(avoid.some(x => x.w === w.w || clash(x, w)) || out.some(x => clash(x, w))) continue; out.push(w); } return out; }
+const ARC_INTRO = {pop:'听英语，戳破对的泡泡！', mem:'翻开两张一样的卡片！'};
+const LOCK_LINE = '先听故事、认单词，游戏就打开啦！';
+const ARC_LOCKED = '先学完一课的听故事和认单词，游戏乐园就打开啦！';
+function arcPool(all){
+  const seen = new Set(), out = [];
+  LESSONS.forEach(l => {
+    if(!all && !(isDone(l.id, 'story') && isDone(l.id, 'words'))) return;
+    l.words.forEach(w => { if(!ARC_SKIP.has(w.w) && !seen.has(w.w)){ seen.add(w.w); out.push(w); } });
+  });
+  return out;
+}
+const gameLocked = lid => !(isDone(lid, 'story') && isDone(lid, 'words'));
+
 const STEPS = [
   {id:'story', ic:'📖', lb:'听故事'},
   {id:'words', ic:'🧩', lb:'认单词'},
@@ -787,6 +839,8 @@ function allPhrases(){
   ROUND_NO.forEach(([,n]) => en.add(`Yes! The ${n} is not round.`));
   ['Thank you!','Open!','Shut!','Red!', ...Object.values(BUS_CMDS), ...FLAG_STEPS.map(s => s.cmd), ...COUNT_WORDS].forEach(t => en.add(t));
   LESSONS.find(l => l.id === 'd2').words.forEach(w => en.add(`A ${w.w}, please!`));
+  arcPool(true).forEach(w => en.add(`Pop the ${w.w}!`));
+  [...Object.values(ARC_INTRO), LOCK_LINE, ARC_LOCKED].forEach(t => zh.add(t));
   MOON_STEPS.forEach(s => { en.add(s.cmd); s.after.forEach(([k,arg]) => { if(k === 'say') en.add(arg); }); });
   return {en:[...en], zh:[...zh]};
 }
@@ -834,6 +888,8 @@ function markDone(step){
   sfx('star');
   const tab = document.querySelector(`.steps [data-s="${step}"]`);
   if(tab && !tab.querySelector('.done')) tab.insertAdjacentHTML('beforeend', '<i class="star on done"></i>');
+  const gt = document.querySelector('.steps [data-s="game"]');
+  if(gt && !gameLocked(lid)){ gt.classList.remove('locked'); const lk = gt.querySelector('.lock'); if(lk) lk.remove(); }
   const all = STEPS.every(s => isDone(lid, s.id));
   if(all) cheer('露露送你一张贴纸！', L().badge); else cheer('得到一颗星！');
   return true;
@@ -874,7 +930,9 @@ function highlight(p){
   return h;
 }
 function nextCTA(step){
-  const i = STEPS.findIndex(s => s.id === step), nx = STEPS[i + 1];
+  const i = STEPS.findIndex(s => s.id === step);
+  let nx = STEPS[i + 1];
+  if(nx && nx.id === 'game' && S.lid && !isDone(S.lid, 'story')) nx = STEPS[0];
   return nx ? `<button class="toy blue big cta" data-a="step" data-s="${nx.id}">下一步：${nx.ic} ${nx.lb} →</button>`
             : `<button class="toy blue big cta" data-a="home">学完啦！回首页看贴纸 →</button>`;
 }
@@ -895,6 +953,7 @@ function pageFor(word){ return L().pages.find(p => p.key.toLowerCase().split('|'
 function render(){
   if(S.view === 'home') renderHome();
   else if(S.view === 'guide') renderGuide();
+  else if(S.view === 'arcade') renderArcade();
   else renderLesson();
 }
 
@@ -916,6 +975,8 @@ function renderHome(){
   ${rev ? `<button class="review" data-a="open" data-id="${rev.id}" data-s="game">
       <span class="ic">🔁</span><span><b>今天复习一下</b><small>${rev.day} · ${esc(rev.title)} · 玩一局「${rev.games[0].name}」</small></span>
     </button>` : ''}
+  ${arcPool().length >= 6 ? `<button class="arcade-card" data-a="arcade"><span class="ic">🎪</span><span><b>游戏乐园</b><small>用学过的 ${arcPool().length} 个单词玩游戏</small></span></button>`
+    : `<button class="arcade-card locked" data-a="arcade"><span class="ic">🔒</span><span><b>游戏乐园</b><small>先学完一课的听故事和认单词，就能来玩啦</small></span></button>`}
   <section class="stickerbook"><h2>我的贴纸本</h2>
   <div class="stks">${LESSONS.map(l => STEPS.every(s => isDone(l.id, s.id)) ? `<span class="stk on" title="${l.day}">${l.badge}</span>` : `<span class="stk" title="${l.day}">?</span>`).join('')}</div></section>
   <h2 class="sec">全部课程</h2>
@@ -985,6 +1046,8 @@ function renderGuide(){
       <p>四步走完、孩子真的会了，再打开老师的原视频录一次跟读。让孩子边说边做动作，录一遍就够，不用反复重录。这样交上去的视频是孩子真会的样子。</p>
       <p>首页的「今天复习一下」每天会换一课学过的旧课，玩一局游戏就行，1 分钟。隔几天再见一次，记得最牢。</p>
       <p>每学完一整课，孩子会得到一张贴纸，贴在首页「我的贴纸」里。让孩子自己去首页看一看、数一数。</p>
+      <p><b>游戏乐园</b>：学完一课的故事和单词后，首页的游戏乐园就会打开，用所有学过的单词混在一起出题（戳泡泡、翻翻卡）。这是最轻松的复习，每天玩一两局就够。</p>
+      <p><b>先学后玩</b>：新课的「玩游戏」要先听完故事、认完单词才会打开。孩子喜欢游戏，正好拿它当奖励，先懂了再玩，游戏才玩得明白。</p>
     </section>
     <section>
       <span class="kicker">生活里用起来</span>
@@ -1006,7 +1069,7 @@ function renderLesson(){
     </div>
   </div>
   <nav class="steps">
-    ${STEPS.map(s => `<button data-a="step" data-s="${s.id}" class="${S.step===s.id?'on':''}"><span class="ic">${s.ic}</span><span class="lb">${s.lb}</span>${isDone(l.id,s.id)?'<i class="star on done"></i>':''}</button>`).join('')}
+    ${STEPS.map(s => { const lk = s.id === 'game' && gameLocked(l.id); return `<button data-a="step" data-s="${s.id}" class="${S.step===s.id?'on':''} ${lk?'locked':''}">${lk?'<span class="lock">🔒</span>':''}<span class="ic">${s.ic}</span><span class="lb">${s.lb}</span>${isDone(l.id,s.id)?'<i class="star on done"></i>':''}</button>`; }).join('')}
   </nav>
   <div class="coach">${luluBtn(COACH[S.step])}<span class="bub" id="coachBub">${COACH[S.step]}</span></div>
   <main class="stage" id="stage"></main>`;
@@ -1670,6 +1733,128 @@ async function gFlag(b, el){
   gameResult(document.getElementById('stage'), '⭐', '国旗做好啦！', '国庆节出门看到国旗，和孩子一起说 “This is the flag of China.”');
 }
 
+/* ---------- games arcade ---------- */
+function renderArcade(){
+  app.innerHTML = `
+  <div class="bar"><button class="toy round" data-a="home" aria-label="返回首页">←</button><div class="title"><b>游戏乐园</b><small>用学过的单词来玩</small></div></div>
+  <div class="coach">${luluBtn(COACH.game)}<span class="bub" id="coachBub">${COACH.game}</span></div>
+  <main class="stage" id="stage"></main>`;
+  arcStage();
+}
+function arcStage(){
+  const st = document.getElementById('stage'); if(!st) return;
+  const a = S.arc;
+  if(!a){
+    st.innerHTML = `<div class="gmenu">
+      <button class="gcard" data-a="arc-game" data-g="pop"><span class="big">🫧</span><h3>戳泡泡</h3><p>听 “Pop the kitten!”，戳破对的泡泡。</p></button>
+      <button class="gcard" data-a="arc-game" data-g="mem"><span class="big">🃏</span><h3>翻翻卡</h3><p>翻开两张一样的卡片配成一对，每翻一张都听一遍。</p></button>
+    </div>`;
+    return;
+  }
+  (a.type === 'pop' ? popRender : memRender)(st);
+}
+function arcHead(prompt, sub, extra = ''){
+  return `<div class="ghead"><button class="toy round" data-a="arc-menu" aria-label="换个游戏">←</button>
+    <div class="prompt"><b>${prompt}</b><small>${sub}</small></div>${extra}
+    <button class="toy round yellow" data-a="arc-replay" aria-label="再听一遍">🔊</button></div>`;
+}
+function arcResult(st, emoji, title, sub){
+  confetti(24);
+  st.innerHTML = `<div class="result"><div class="bigemoji">${emoji}</div><h2>${title}</h2><p class="note">${sub}</p>
+    <div class="row"><button class="toy yellow big" data-a="arc-game" data-g="${S.arc.type}">🔁 再玩一次</button><button class="toy big" data-a="arc-menu">换个游戏</button></div></div>`;
+}
+function arcStart(type){
+  stopAll();
+  const pool = arcPool();
+  if(type === 'pop'){
+    S.arc = {type, pool, order: shuffle(pool).slice(0, 8), i:0, score:0, miss:false};
+  } else {
+    const six = pickApart(shuffle(pool), 6, []);
+    S.arc = {type, cards: shuffle([...six, ...six]), up:[], matched:new Set(), moves:0};
+  }
+  S.arc.intro = !INTRO_DONE.has('arc-' + type);
+  INTRO_DONE.add('arc-' + type);
+  arcStage();
+}
+
+/* pop the bubble that holds what Lulu asks for */
+function popRender(st){
+  const a = S.arc;
+  if(a.i >= a.order.length){
+    arcResult(st, '🫧', `戳破了 ${Math.min(a.score, a.order.length)} 个泡泡！`, '每个泡泡里都是学过的单词，多玩几次就记住啦。');
+    return;
+  }
+  const t = a.order[a.i];
+  const others = pickApart(shuffle(a.pool), 3, [t]);
+  a.items = shuffle([t, ...others]);
+  a.miss = false;
+  const lanes = shuffle([15, 38, 62, 85]);
+  st.innerHTML = arcHead(`Pop the ${esc(t.w)}!`, `第 ${a.i+1} 个，共 ${a.order.length} 个`, `<span class="score">⭐ ${a.score}</span>`) +
+    `<div class="pond">${a.items.map((w, k) => `<button class="bubl" data-a="pop" data-k="${k}" style="left:${lanes[k]}%;--dur:${(9 + k * 0.7).toFixed(1)}s;--delay:${(-k * 2.3 - 0.6).toFixed(1)}s"><span class="pic2">${wordPic(w)}</span></button>`).join('')}</div>`;
+  popSay();
+}
+async function popSay(){
+  const a = S.arc, id = runId;
+  if(a.intro){ a.intro = false; await say(ARC_INTRO.pop, 'zh-CN'); if(!alive(id)) return; await wait(200); }
+  if(a.order[a.i]) say(`Pop the ${a.order[a.i].w}!`);
+}
+async function gPop(k, el){
+  const a = S.arc; if(!a || a.busy) return;
+  const w = a.items[k], t = a.order[a.i], id = runId;
+  if(w.w === t.w){
+    if(a.done === a.i) return;
+    a.done = a.i; a.busy = true;
+    if(!a.miss) a.score++;
+    sfx('ok');
+    const m = getComputedStyle(el).transform;
+    el.style.animation = 'none'; el.style.transform = m === 'none' ? '' : m;
+    requestAnimationFrame(() => { el.style.transition = 'transform .3s, opacity .3s'; el.style.transform = (m === 'none' ? '' : m + ' ') + 'scale(1.5)'; el.style.opacity = '0'; });
+    await say(t.w);
+    await wait(350);
+    a.busy = false;
+    if(!alive(id)) return;
+    a.i++; arcStage();
+  } else {
+    a.miss = true; sfx('no');
+    el.classList.add('nope'); setTimeout(() => el.classList.remove('nope'), 600);
+    await say(w.w);
+    if(alive(id)){ await wait(250); if(alive(id)) say(`Pop the ${t.w}!`); }
+  }
+}
+
+/* memory: flip two cards that show the same thing */
+function memRender(st){
+  const a = S.arc;
+  st.innerHTML = arcHead('找一找，哪两张一样？', `翻了 ${a.moves} 次 · 配成 ${a.matched.size / 2} 对，共 ${a.cards.length / 2} 对`) +
+    `<div class="mem">${a.cards.map((w, k) => `<button class="mcard ${a.up.includes(k) || a.matched.has(k) ? 'up' : ''} ${a.matched.has(k) ? 'matched' : ''}" data-a="flip" data-k="${k}" aria-label="卡片">
+      <span class="in"><span class="bk">★</span><span class="fc"><span class="pic2">${wordPic(w)}</span><span class="w">${esc(w.w)}</span></span></span></button>`).join('')}</div>`;
+  if(a.intro){ a.intro = false; say(ARC_INTRO.mem, 'zh-CN'); }
+}
+async function gFlip(k, el){
+  const a = S.arc; if(!a || a.busy || a.matched.has(k) || a.up.includes(k)) return;
+  const id = runId;
+  a.up.push(k); el.classList.add('up');
+  const sayIt = say(a.cards[k].w);
+  if(a.up.length < 2) return;
+  a.busy = true; a.moves++;
+  const [x, y] = a.up;
+  await sayIt;
+  if(!alive(id)){ a.busy = false; return; }
+  if(a.cards[x].w === a.cards[y].w){
+    a.matched.add(x); a.matched.add(y); a.up = [];
+    sfx('ok');
+    document.querySelectorAll('.mcard').forEach((c, i) => { if(i === x || i === y) c.classList.add('matched'); });
+    const sub = document.querySelector('.ghead .prompt small'); if(sub) sub.textContent = `翻了 ${a.moves} 次 · 配成 ${a.matched.size / 2} 对，共 ${a.cards.length / 2} 对`;
+    a.busy = false;
+    if(a.matched.size === a.cards.length){ await wait(700); if(alive(id)) arcResult(document.getElementById('stage'), '🃏', '全部配对成功！', `一共翻了 ${a.moves} 次。下次试试用更少的次数！`); }
+  } else {
+    await wait(900);
+    document.querySelectorAll('.mcard').forEach((c, i) => { if(i === x || i === y) c.classList.remove('up'); });
+    a.up = [];
+    a.busy = false;
+  }
+}
+
 /* ---------- step 4: speak ---------- */
 const canRecord = !!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia && window.MediaRecorder);
 S.recOn = store.get('recOn', false);
@@ -1810,7 +1995,7 @@ async function karaokePlay(){
 
 /* ============ updates ============ */
 /* the site is cached for a while; check a tiny version file and reload on the home screen when a new version is out */
-const APP_VERSION = '20260927101749';
+const APP_VERSION = '20260927103413';
 let updateReady = null;
 function checkUpdate(){
   if(APP_VERSION.startsWith('__')) return;
@@ -1835,10 +2020,21 @@ const actions = {
   open(b){ stopAll(); S.view='lesson'; S.lid=b.dataset.id; S.step=b.dataset.s || 'story'; S.page=0; S.seen=new Set(); S.game=null; S.sp=null; S.kara=null; keepAwake(); prefetchLesson(L()); render(); scrollTo(0,0); },
   home(){ stopAll(); if(updateReady) return applyUpdate(); S.view='home'; render(); scrollTo(0,0); },
   guide(){ stopAll(); S.view='guide'; render(); scrollTo(0,0); },
+  arcade(){
+    if(arcPool().length < 6){ luluReact('oops', ARC_LOCKED); say(ARC_LOCKED, 'zh-CN'); return; }
+    stopAll(); S.view='arcade'; S.arc=null; LESSONS.forEach(l => { if(!gameLocked(l.id)) prefetchLesson(l); }); keepAwake(); render(); scrollTo(0,0);
+  },
+  'arc-game'(b){ arcStart(b.dataset.g); },
+  'arc-menu'(){ stopAll(); S.arc=null; arcStage(); },
+  'arc-replay'(){ const a=S.arc; if(a && a.type==='pop' && a.order[a.i]) say(`Pop the ${a.order[a.i].w}!`); },
+  pop(b){ gPop(+b.dataset.k, b); },
+  flip(b){ gFlip(+b.dataset.k, b); },
   speed(b){ S.speed = parseFloat(b.dataset.v); store.set('speed', S.speed);
     document.querySelectorAll('.speed button').forEach(x => x.classList.toggle('on', x === b));
     if(!player.paused && !curSrc.startsWith('blob:')) player.playbackRate = S.speed; },
-  step(b){ stopAll(); S.step=b.dataset.s; if(S.step!=='game') S.game=null; S.kara=null; if(S.sp) S.sp.phase='idle';
+  step(b){
+    if(b.dataset.s === 'game' && gameLocked(S.lid)){ luluReact('oops', LOCK_LINE); say(LOCK_LINE, 'zh-CN'); return; }
+    stopAll(); S.step=b.dataset.s; if(S.step!=='game') S.game=null; S.kara=null; if(S.sp) S.sp.phase='idle';
     document.querySelectorAll('.steps button').forEach(x => x.classList.toggle('on', x.dataset.s === S.step));
     const cb = document.getElementById('coachBub'); if(cb){ cb.textContent = COACH[S.step]; delete cb.dataset.base; }
     const cl = document.querySelector('.coach .lulu'); if(cl) cl.dataset.say = COACH[S.step];
